@@ -1,0 +1,79 @@
+body { background-color:white ;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+font-size:14px;
+color:black;
+}
+
+a:hover { font-family: Garamond;
+color:black;
+background-color: white}
+}
+h1 { font-family: Garamond;
+font-size:40px}
+
+h2 { font-family:Garamond;
+font-size:32px}
+
+h3 { font-family:Garamond;
+font-size:26px}
+
+#leftcontent { position: absolute;
+left:10px;
+top:77px;
+width:240px;
+background:peachpuff;
+border:2px solid dark­seagreen;
+}
+
+#centercontent { top:77px;
+background:white;
+margin-left:119px;
+margin-right:139px;
+border:4px solid dark­seagreen;
+voice-family: "
+\"
+}
+
+\"
+"
+;
+voice-family: inherit;
+margin-left:121px;
+margin-right:141px;
+}
+
+html>
+body #centercontent { margin-left:121px;
+margin-right:141px;
+}
+
+#rightcontent { position: absolute;
+right:10px;
+top:77px;
+width:140px;
+background:peachpuff;
+border:2px solid dark­seagreen;
+}
+
+#banner { background:seagreen;
+height:50px;
+border-top:2 solid dark­seagreen;
+border-right:2 solid dark­seagreen;
+border-left:2 solid dark­seagreen;
+voice-family: "
+\"
+}
+
+\"
+"
+;
+voice-family: inherit;
+height:49px;
+}
+
+html>
+body #banner { height:49px;
+}
+
+p,h1,h2,h3 { margin:0px 10px 10px 10px;
+}
