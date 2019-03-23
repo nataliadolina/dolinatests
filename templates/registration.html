@@ -19,13 +19,10 @@
         font-size:0.9em;
         color:#3a3a3a;
 }
-a {text-decoration: none;
-color:#98FB98;
-}
 input:focus, textarea:focus {
     border:1px solid #98FB98;
 </style>
-<h1>Authorization</h1>
+<h1>Registration</h1>
     <div class="container bgcont center-block">
         <div class="row background-row">
 
@@ -49,10 +46,17 @@ input:focus, textarea:focus {
                         </div>
                     {% endfor %}
                 </p>
-                <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-                <p>{{ form.submit() }}</p>
+                <p>
+                    {{ form.repeatpassword.label }}<br>
+                    {{ form.repeatpassword }}<br>
+                    {% for error in form.repeatpassword.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
             </form>
-            <a href="/registration" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign up</a>
+            <h2>{{text}}</h2>
         </div>
     </div>
 </body>
