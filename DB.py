@@ -1,4 +1,5 @@
 import sqlite3
+import hashlib
 
 
 class DB:
@@ -15,7 +16,7 @@ class DB:
 
 class UsersModel:
     def __init__(self, connection):
-        self.connection = connection
+        self.connection = connection.get_connection()
 
     def init_table(self):
         cursor = self.connection.cursor()
@@ -32,6 +33,7 @@ class UsersModel:
 
     def exists(self, user_name, password_hash):
         cursor = self.connection.cursor()
+        password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
         cursor.execute("SELECT * FROM users WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
@@ -50,11 +52,17 @@ class UsersModel:
 
     def insert(self, user_name, password_hash):
         cursor = self.connection.cursor()
+        password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
         cursor.execute('''INSERT INTO users 
                           (user_name, password_hash) 
-                          VALUES (?,?,?)''', (user_name, password_hash))
+                          VALUES (?,?)''', (user_name, password_hash))
         cursor.close()
         self.connection.commit()
+
+    def delete(self):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM users''')
+
 
 class NewsModel:
     def __init__(self, conn):

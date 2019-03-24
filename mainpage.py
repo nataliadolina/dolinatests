@@ -20,6 +20,8 @@ class LoginForm(FlaskForm):
 
 base = DB()
 users_base = UsersModel(base)
+users_base.init_table()
+print(users_base.get_all())
 
 
 class RegistrateForm(FlaskForm):
@@ -36,9 +38,13 @@ def registration():
         f1, f2 = form.username.data, form.password.data
         exists = users_base.exists(f1, f2)
         if exists[0]:
-            form.username.data, form.password.data = '', ''
+            form.username.data = ''
             return render_template('registration.html',
-                                   text='пользователь с таким же именем уже существует. Смените логин', form=form)
+                                   text='User with such name already exists. Please change the login', form=form)
+        elif f2 != form.repeatpassword.data:
+            form.password.data = ''
+            return render_template('registration.html',
+                                   text='Passwords do not match. Please check your spelling and try again', form=form)
         else:
             session['username'] = form.username.data
             nm = UsersModel(base)
@@ -57,8 +63,8 @@ def login():
             session['username'] = request.form['username']
             session['user_id'] = exists[1]
             return redirect('/index')
-        return redirect('/failure')
-    return render_template('login.html', title='Авторизация', form=form)
+        return render_template('login.html', title='Authorization', text='invalid login or password', form=form)
+    return render_template('login.html', title='Authorization', text='', form=form)
 
 
 @app.route('/', methods=['GET', 'POST'])
