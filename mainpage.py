@@ -67,10 +67,14 @@ def login():
     return render_template('login.html', title='Authorization', text='', form=form)
 
 
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     return render_template('tasks.html')
+
+
+@app.route('/', methods=['GET', 'POST'])
+def tasks():
+    return render_template('task.html')
 
 
 if __name__ == '__main__':

@@ -64,16 +64,17 @@ class UsersModel:
         cursor.execute('''DELETE FROM users''')
 
 
-class NewsModel:
-    def __init__(self, conn):
-        self.connection = conn
+class TaskssModel:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS news 
-                                    (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                                     title VARCHAR(100),
-                                     content VARCHAR(1000),
+        cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                    numberofstrings VARCHAR(100)
+                                     content VARCHAR(100),
+                                     choices VARCHAR(1000),
                                      user_id INTEGER 
                              )''')
         cursor.close()
@@ -82,11 +83,11 @@ class NewsModel:
     def get_connection(self):
         return self.connection
 
-    def insert(self, title, content, user_id):
+    def insert(self, numberofstrings, content,choices, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO news 
-                          (title, content, user_id) 
-                          VALUES (?,?,?)''', (title, content, str(user_id)))
+        cursor.execute('''INSERT INTO tasks
+                          (numberofstrings, content,choices, user_id) 
+                          VALUES (?,?,?,?)''', (numberofstrings, content,choices, user_id))
         cursor.close()
         self.connection.commit()
 
@@ -99,14 +100,14 @@ class NewsModel:
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:
-            cursor.execute("SELECT * FROM news WHERE user_id = ?", (str(user_id),))
+            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (str(user_id),))
         else:
-            cursor.execute("SELECT * FROM news")
+            cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
         return rows
 
     def delete(self, news_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM news WHERE id = ?''', (str(news_id),))
+        cursor.execute('''DELETE FROM tasks WHERE id = ?''', (str(news_id),))
         cursor.close()
         self.connection.commit()

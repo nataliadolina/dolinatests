@@ -41,6 +41,7 @@ body {
 	float: left;
 	list-style-type: none;
 }
+
 </style>
 <body>
 <nav class="navbar navbar-toggleable-md navbar-light bg-faded" id = 'banner'>
@@ -58,7 +59,7 @@ body {
       <li class="nav-item">
         <a class="nav-link" href="/login">Authorization</a>
       </li>
-      {% if session['username'] == 'admin1' or session['username'] == 'admin2' %}
+      {% if session['user_id'] == 5 or session['user_id'] == 6 %}
       <li class="nav-item">
         <a class="nav-link " href="/addtask">add task</a>
       </li>
