@@ -3,7 +3,7 @@ import json
 from flask import Flask, render_template, request, session
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 from DB import DB, UsersModel
 
@@ -29,6 +29,12 @@ class RegistrateForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     repeatpassword = PasswordField('Repeat password', validators=[DataRequired()])
     submit = SubmitField('Done')
+
+
+class AddTaskForm(FlaskForm):
+    title = TextAreaField('sentence', validators=[DataRequired()])
+    content = TextAreaField('answer choice', validators=[DataRequired()])
+    submit = SubmitField('Add')
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -74,7 +80,12 @@ def index():
 
 @app.route('/', methods=['GET', 'POST'])
 def tasks():
-    return render_template('task.html')
+    return render_template('tasks.html')
+
+
+@app.route('/add_task', methods=['GET', 'POST'])
+def add_task():
+    form = AddTaskForm
 
 
 if __name__ == '__main__':
