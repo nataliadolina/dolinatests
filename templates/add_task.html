@@ -2,20 +2,35 @@
 
 {% block content %}
 <style>
-p input{
-   width:1000px;
-    height:35px;
-    background: white;
-    border:1px solid #dedede;
-    padding:10px;
-    margin-top:3px;
-    font-size:0.9em;
-    color:#3a3a3a;
+textarea {
+    width: 500px;
+    height: 300px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    font-family: 'Monaco', Courier, monospace;
+    margin-bottom: 1.5em;
+    padding: .3em .4em;
+}
+textarea:focus {
+    border:1px solid #98FB98;
+.button{
+        width: 15%;
+    }
+    p input{
+       width:1000px;
+        height:35px;
+        background: white;
+        border:1px solid #dedede;
+        padding:10px;
+        margin-top:3px;
+        font-size:0.9em;
+        color:#3a3a3a;
+}
 a {text-decoration: none;
 color:#98FB98;
 }
-input:focus, textarea:focus {
-    border:1px solid #98FB98;
 </style>
     <h1>Add task</h1>
     <form action="" method="post" novalidate>
