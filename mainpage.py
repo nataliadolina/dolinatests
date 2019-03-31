@@ -5,7 +5,7 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
-from DB import DB, UsersModel
+from DB import DB, UsersModel, TasksModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -32,8 +32,8 @@ class RegistrateForm(FlaskForm):
 
 
 class AddTaskForm(FlaskForm):
-    title = TextAreaField('sentence', validators=[DataRequired()])
-    content = TextAreaField('answer choice', validators=[DataRequired()])
+    sentence = TextAreaField('sentence', validators=[DataRequired()])
+    choice = TextAreaField('answer choice', validators=[DataRequired()])
     submit = SubmitField('Add')
 
 
@@ -80,12 +80,24 @@ def index():
 
 @app.route('/', methods=['GET', 'POST'])
 def tasks():
-    return render_template('tasks.html')
+    if 'username' in session:
+        return render_template('tasks.html')
+    else:
+        return redirect('/login')
 
 
 @app.route('/add_task', methods=['GET', 'POST'])
 def add_task():
-    form = AddTaskForm
+    if 'username' not in session:
+        return redirect('/login')
+    form = AddTaskForm()
+    if form.validate_on_submit():
+        sentence = form.sentence.data
+        choice = form.choice.data
+        nm = TasksModel(base)
+        nm.insert(sentence, choice, session['user_id'])
+        return redirect("/index")
+    return render_template('add_task.html', form=form, username=session['username'])
 
 
 if __name__ == '__main__':

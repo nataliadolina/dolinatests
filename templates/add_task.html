@@ -1,22 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Добавление новости</h1>
+<style>
+p input{
+   width:1000px;
+    height:35px;
+    background: white;
+    border:1px solid #dedede;
+    padding:10px;
+    margin-top:3px;
+    font-size:0.9em;
+    color:#3a3a3a;
+a {text-decoration: none;
+color:#98FB98;
+}
+input:focus, textarea:focus {
+    border:1px solid #98FB98;
+</style>
+    <h1>Add task</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p>
-            {{ form.title.label }}<br>
-            {{ form.title }}<br>
-            {% for error in form.title.errors %}
+            {{ form.sentence.label }}<br>
+            {{ form.sentence }}<br>
+            {% for error in form.sentence.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>
             {% endfor %}
         </p>
         <p>
-            {{ form.content.label }}<br>
-            {{ form.content }}<br>
-            {% for error in form.content.errors %}
+            {{ form.choice.label }}<br>
+            {{ form.choice }}<br>
+            {% for error in form.choice.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
                 </div>

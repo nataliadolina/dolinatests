@@ -64,7 +64,7 @@ class UsersModel:
         cursor.execute('''DELETE FROM users''')
 
 
-class TaskssModel:
+class TasksModel:
     def __init__(self, connection):
         self.connection = connection.get_connection()
 
@@ -72,7 +72,6 @@ class TaskssModel:
         cursor = self.connection.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                    numberofstrings VARCHAR(100)
                                      content VARCHAR(100),
                                      choices VARCHAR(1000),
                                      user_id INTEGER 
@@ -83,11 +82,11 @@ class TaskssModel:
     def get_connection(self):
         return self.connection
 
-    def insert(self, numberofstrings, content,choices, user_id):
+    def insert(self, content, choices, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO tasks
-                          (numberofstrings, content,choices, user_id) 
-                          VALUES (?,?,?,?)''', (numberofstrings, content,choices, user_id))
+                          (content,choices, user_id) 
+                          VALUES (?,?,?)''', (content, choices, user_id))
         cursor.close()
         self.connection.commit()
 

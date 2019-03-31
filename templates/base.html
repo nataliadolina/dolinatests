@@ -8,22 +8,6 @@
 </head>
 
 <style>
-  *::-webkit-input-placeholder {
-	color: #666;
-	opacity: 1;
-}
-*:-moz-placeholder {
-	color: #666;
-	opacity: 1;
-}
-*::-moz-placeholder {
-	color: #666;
-	opacity: 1;
-}
-*:-ms-input-placeholder {
-	color: #666;
-	opacity: 1;
-}
 body {
 	background-color: #FFE4C4;
 }
@@ -32,45 +16,44 @@ body {
 	text-align: center;
 	font-size: 30px;
 	}
-}
-.bottom_line{
-	background-color: gray;
-	color: white;
-}
-.top_name{
-	float: left;
-	list-style-type: none;
-}
+.top_nav{
+	width: 100%;
 
+}
+.top_nav ul li{
+	list-style-type: none;
+	display: inline-block;
+	vertical-align: center;
+	padding-right: 40px;
+}
+.top_nav a{
+	color: black;
+}
+.top_nav a:hover{
+	color: #78B0AE;
+}
 </style>
 <body>
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded" id = 'banner'>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  {% if "username" in session %}
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand">{{session['username']}}</a>
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      {% endif %}
-      <li class="nav-item active">
-        <a class="nav-link" href="/registration">Registration<span class="sr-only"></span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/login">Authorization</a>
-      </li>
-      {% if session['user_id'] == 5 or session['user_id'] == 6 %}
-      <li class="nav-item">
-        <a class="nav-link " href="/addtask">add task</a>
-      </li>
-      {% endif %}
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
+<div class="top_line">
+	<div class="container">
+      <div class="col-md-12">
+			<div class="row">
+				<div class="top_nav" style="background-color: #fff1db;">
+					<ul>
+						{% if "username" in session %}
+						<li><a class="navbar-brand" href="/registration"><h4>Registration</h4></a></li>
+						<li><a class="navbar-brand" href="/login"><h4>Authorization</h4></a></li>
+                        {% if session['user_id'] == 5 or session['user_id'] == 6 %}
+						<li><a class="navbar-brand" href="/add_task"><h4>add task</h4></a></li>
+                        {% endif %}
+						<li><a class="navbar-brand" href="/logout"><h4>{{session['username']}}</h4></a></li>
+          				{% endif %}
+					</ul>
+				</div>
+              </div>
+        </div>
+	</div>
+</div>
 {% block content %}{% endblock %}
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
