@@ -32,8 +32,9 @@ class RegistrateForm(FlaskForm):
 
 
 class AddTaskForm(FlaskForm):
-    sentence = TextAreaField('sentence', validators=[DataRequired()])
+    sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice', validators=[DataRequired()])
+    correct = TextAreaField('answer choice', validators=[DataRequired()])
     submit = SubmitField('Add')
 
 
@@ -86,6 +87,9 @@ def tasks():
         return redirect('/login')
 
 
+users = [x[1] for x in users_base.get_all()]
+
+
 @app.route('/add_task', methods=['GET', 'POST'])
 def add_task():
     if 'username' not in session:
@@ -94,10 +98,11 @@ def add_task():
     if form.validate_on_submit():
         sentence = form.sentence.data
         choice = form.choice.data
+        correct = form.correct.data
         nm = TasksModel(base)
-        nm.insert(sentence, choice, session['user_id'])
+        nm.insert(sentence, choice, session['user_id'], correct)
         return redirect("/index")
-    return render_template('add_task.html', form=form, username=session['username'])
+    return render_template('add_task.html', form=form, username=session['username'], users=users)
 
 
 if __name__ == '__main__':

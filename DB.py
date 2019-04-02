@@ -74,6 +74,7 @@ class TasksModel:
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      content VARCHAR(100),
                                      choices VARCHAR(1000),
+                                     correct_choice VARCHAR(100),
                                      user_id INTEGER 
                              )''')
         cursor.close()
@@ -82,11 +83,11 @@ class TasksModel:
     def get_connection(self):
         return self.connection
 
-    def insert(self, content, choices, user_id):
+    def insert(self, content, choices, user_id, correct):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO tasks
-                          (content,choices, user_id) 
-                          VALUES (?,?,?)''', (content, choices, user_id))
+                          (content,choices, user_id,correct_choice) 
+                          VALUES (?,?,?,?)''', (content, choices, user_id, correct))
         cursor.close()
         self.connection.commit()
 

@@ -35,24 +35,49 @@ color:#98FB98;
     <h1>Add task</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.sentence.label }}<br>
-            {{ form.sentence }}<br>
-            {% for error in form.sentence.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+            <form>
+            <p>
+                {{ form.sentence.label }}<br>
+                {{ form.sentence }}<br>
+                {% for error in form.sentence.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.choice.label }}<br>
+                {{ form.choice }}<br>
+                {% for error in form.choice.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.correct.label }}<br>
+                {{ form.correct }}<br>
+                {% for error in form.correct.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit() }}</p>
+            </form>
+            </div>
+            <div class="col-lg-4">
+            <div class="form-group form-check">
+                {% for i in users %}
+                <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
+                <label class="form-check-label" for="acceptRules">{{i}}</label>
+                <h4>  </h4>
+                {% endfor %}
                 </div>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.choice.label }}<br>
-            {{ form.choice }}<br>
-            {% for error in form.choice.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+            </div>
+            </div>
+        </div>
 {% endblock %}
