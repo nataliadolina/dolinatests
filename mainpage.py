@@ -88,6 +88,11 @@ def tasks():
 
 
 users = [x[1] for x in users_base.get_all()]
+ides = [x[0] for x in users_base.get_all()]
+ides_names = {}
+for i in range(len(users)):
+    ides_names[ides[i]] = users[i]
+ides_names = sorted(list(ides_names.items()), key=lambda x: x[1])
 
 
 @app.route('/add_task', methods=['GET', 'POST'])
@@ -100,9 +105,10 @@ def add_task():
         choice = form.choice.data
         correct = form.correct.data
         nm = TasksModel(base)
-        nm.insert(sentence, choice, session['user_id'], correct)
+        print(request.form['accept'])
+        #nm.insert(sentence, choice, session['user_id'], correct)
         return redirect("/index")
-    return render_template('add_task.html', form=form, username=session['username'], users=users)
+    return render_template('add_task.html', form=form, username=session['username'], users=ides_names)
 
 
 if __name__ == '__main__':

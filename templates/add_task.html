@@ -31,6 +31,8 @@ textarea:focus {
 a {text-decoration: none;
 color:#98FB98;
 }
+
+
 </style>
     <h1>Add task</h1>
     <form action="" method="post" novalidate>
@@ -70,10 +72,12 @@ color:#98FB98;
             </form>
             </div>
             <div class="col-lg-4">
+            </div>
+            <div class="col-lg-4">
             <div class="form-group form-check">
                 {% for i in users %}
-                <input type="checkbox" class="form-check-input" id="acceptRules" name="accept">
-                <label class="form-check-label" for="acceptRules">{{i}}</label>
+                <input type="checkbox" class="form-check-input" id="acceptRules" name="accept" value = {{i[0]}}>
+                <label class="form-check-label" for="acceptRules">{{i[1]}}</label>
                 <h4>  </h4>
                 {% endfor %}
                 </div>
