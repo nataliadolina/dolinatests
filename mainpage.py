@@ -32,6 +32,7 @@ class RegistrateForm(FlaskForm):
 
 
 class AddTaskForm(FlaskForm):
+    title = StringField('title', validators=[DataRequired()])
     sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice', validators=[DataRequired()])
     correct = TextAreaField('answer choice', validators=[DataRequired()])
@@ -82,7 +83,7 @@ def index():
 @app.route('/', methods=['GET', 'POST'])
 def tasks():
     if 'username' in session:
-        return render_template('tasks.html')
+        return render_template('tasks.html', flag=False)
     else:
         return redirect('/login')
 
@@ -93,6 +94,8 @@ ides_names = {}
 for i in range(len(users)):
     ides_names[ides[i]] = users[i]
 ides_names = sorted(list(ides_names.items()), key=lambda x: x[1])
+nm = TasksModel(base)
+nm.init_table()
 
 
 @app.route('/add_task', methods=['GET', 'POST'])
@@ -101,14 +104,33 @@ def add_task():
         return redirect('/login')
     form = AddTaskForm()
     if form.validate_on_submit():
+        title = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
         correct = form.correct.data
-        nm = TasksModel(base)
-        print(request.form['accept'])
-        #nm.insert(sentence, choice, session['user_id'], correct)
+        for i in ides:
+            if request.form.get(str(i)):
+                print(request.form.get(str(i)))
+                nm.insert(title, sentence, choice, i, correct)
         return redirect("/index")
     return render_template('add_task.html', form=form, username=session['username'], users=ides_names)
+
+
+@app.route('/all_tasks', methods=['GET', 'POST'])
+def all_tasks():
+    if 'username' not in session:
+        return redirect('/login')
+    all = nm.get_all(session['user_id'])
+    titles = [x[1] for x in all]
+    n = len(titles)
+    session['titles'] = titles
+    contents = [i.split('\n') for i in [x[2] for x in all]]
+    session['contents'] = contents
+    choices = [i.split('\n') for i in [x[3] for x in all]]
+    session['choices'] = choices
+    correct_choices = [x[4] for x in all]
+    session['correct'] = correct_choices
+    return render_template('tasks.html', flag=True, n=n)
 
 
 if __name__ == '__main__':

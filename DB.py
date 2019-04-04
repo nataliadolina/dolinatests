@@ -72,7 +72,8 @@ class TasksModel:
         cursor = self.connection.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     content VARCHAR(100),
+                                     title VARCHAR(100),
+                                     content VARCHAR(10000),
                                      choices VARCHAR(1000),
                                      correct_choice VARCHAR(100),
                                      user_id INTEGER 
@@ -83,11 +84,11 @@ class TasksModel:
     def get_connection(self):
         return self.connection
 
-    def insert(self, content, choices, user_id, correct):
+    def insert(self, title, content, choices, correct, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO tasks
-                          (content,choices, user_id,correct_choice) 
-                          VALUES (?,?,?,?)''', (content, choices, user_id, correct))
+                          (title, content, choices, correct_choice, user_id) 
+                          VALUES (?,?,?,?,?)''', (title, content, choices, correct, user_id,))
         cursor.close()
         self.connection.commit()
 

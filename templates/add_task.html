@@ -42,6 +42,15 @@ color:#98FB98;
                 <div class="col-lg-4">
             <form>
             <p>
+                {{ form.title.label }}<br>
+                {{ form.title }}<br>
+                {% for title in form.title.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>
                 {{ form.sentence.label }}<br>
                 {{ form.sentence }}<br>
                 {% for error in form.sentence.errors %}
@@ -76,7 +85,7 @@ color:#98FB98;
             <div class="col-lg-4">
             <div class="form-group form-check">
                 {% for i in users %}
-                <input type="checkbox" class="form-check-input" id="acceptRules" name="accept" value = {{i[0]}}>
+                <input type="checkbox" class="form-check-input" id="acceptRules" name={{i[0]}} value = {{i[0]}}>
                 <label class="form-check-label" for="acceptRules">{{i[1]}}</label>
                 <h4>  </h4>
                 {% endfor %}

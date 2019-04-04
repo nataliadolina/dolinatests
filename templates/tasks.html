@@ -4,8 +4,20 @@
     <div class="jumbotron" style="background-image: url(static/gradientyellow.jpg); background-size: 100%;">
       <h1 class="display-4">My tasks</h1>
       <p class="lead">
-        <button type="button" class="btn btn-outline-dark">Show</button>
+          <a href="/all_tasks" class="btn btn-outline-dark" role="button">Show</a>
       </p>
     </div>
+    <div class="card" style="width: 18rem;">
+  <img src="static/question.png" class="card-img-top">
+        {% if flag %}
+         {% for i in range(n)%}
+  <div class="card-body">
+    <h5 class="card-title">{{session['titles'][i]}}</h5>
+    <p class="card-text">{{session['content'][i][0]}}</p>
+    <a href="/task" class="btn btn-primary">Start</a>
+  </div>
+        {% endfor %}
+        {% endif %}
+</div>
 </div>
 {% endblock %}
