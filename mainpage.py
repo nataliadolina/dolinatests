@@ -111,10 +111,13 @@ def add_task():
         for i in ides:
             if request.form.get(str(i)):
                 print(request.form.get(str(i)))
-                nm.insert(title, sentence, choice, i, correct)
+                nm.insert(title, sentence, choice, correct, i)
                 print(nm.get_all())
         return redirect("/index")
     return render_template('add_task.html', form=form, username=session['username'], users=ides_names)
+
+
+print(nm.get_all())
 
 
 @app.route('/all_tasks', methods=['GET', 'POST'])
