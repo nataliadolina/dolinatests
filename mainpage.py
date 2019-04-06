@@ -112,6 +112,7 @@ def add_task():
             if request.form.get(str(i)):
                 print(request.form.get(str(i)))
                 nm.insert(title, sentence, choice, i, correct)
+                print(nm.get_all())
         return redirect("/index")
     return render_template('add_task.html', form=form, username=session['username'], users=ides_names)
 
@@ -122,7 +123,7 @@ def all_tasks():
         return redirect('/login')
     all = nm.get_all(session['user_id'])
     titles = [x[1] for x in all]
-    n = len(titles)
+    n = range(len(titles))
     session['titles'] = titles
     contents = [i.split('\n') for i in [x[2] for x in all]]
     session['contents'] = contents

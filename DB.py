@@ -101,7 +101,7 @@ class TasksModel:
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:
-            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (str(user_id),))
+            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", str(user_id))
         else:
             cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
