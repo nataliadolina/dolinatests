@@ -7,17 +7,19 @@
           <a href="/all_tasks" class="btn btn-outline-dark" role="button">Show</a>
       </p>
     </div>
-    <div class="card" style="width: 18rem;">
-  <img src="static/question.png" class="card-img-top">
         {% if flag %}
-         {% for i in range(n)%}
-  <div class="card-body">
-    <h5 class="card-title">{{session['titles'][i]}}</h5>
-    <p class="card-text">{{session['content'][i][0]}}</p>
-    <a href="/task" class="btn btn-primary">Start</a>
-  </div>
-        {% endfor %}
+            {% for i in n%}
+                <div class="card" name={{i}} value= {{i}} style="width: 18rem;">
+                      <div class="card-body">
+                        <h5 class="card-title">{{session['titles'][i]}}</h5>
+                        <p class="card-text">{{session['contents'][i][0]}}</p>
+                          {% if session['user_id'] == 1 or session['user_id'] == 2 %}
+                                <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
+                          {% endif %}
+                        <a href="/task" class="btn btn-light">Start</a>
+                      </div>
+            {% endfor %}
         {% endif %}
-</div>
+    </div>
 </div>
 {% endblock %}

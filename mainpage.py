@@ -1,5 +1,3 @@
-import json
-
 from flask import Flask, render_template, request, session
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
@@ -81,6 +79,7 @@ def index():
 
 
 @app.route('/', methods=['GET', 'POST'])
+@app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
     if 'username' in session:
         return render_template('tasks.html', flag=False)
@@ -127,6 +126,8 @@ def all_tasks():
     all = nm.get_all(session['user_id'])
     titles = [x[1] for x in all]
     n = range(len(titles))
+    ides_tasks = [x[0] for x in all]
+    session['task_id'] = ides_tasks
     session['titles'] = titles
     contents = [i.split('\n') for i in [x[2] for x in all]]
     session['contents'] = contents
@@ -135,6 +136,14 @@ def all_tasks():
     correct_choices = [x[4] for x in all]
     session['correct'] = correct_choices
     return render_template('tasks.html', flag=True, n=n)
+
+
+@app.route('/delete/<int:id>', methods=['GET', 'POST'])
+def delete_tasks(id):
+    if 'username' not in session:
+        return redirect('/login')
+    nm.delete(id)
+    return redirect('/all_tasks')
 
 
 if __name__ == '__main__':
