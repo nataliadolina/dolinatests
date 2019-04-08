@@ -132,7 +132,14 @@ def all_tasks():
     contents = [i.split('\n') for i in [x[2] for x in all]]
     session['contents'] = contents
     choices = [i.split('\n') for i in [x[3] for x in all]]
-    session['choices'] = choices
+    choices1 = []
+    arr = []
+    for i in choices:
+        for j in i:
+            arr.append(j.split())
+        choices1.append(arr)
+        arr = []
+    session['choices'] = choices1
     correct_choices = [x[4] for x in all]
     session['correct'] = correct_choices
     print(session['titles'], session['contents'], session['choices'], session['correct'])
