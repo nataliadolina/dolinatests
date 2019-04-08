@@ -16,7 +16,7 @@
                           {% if session['user_id'] == 1 or session['user_id'] == 2 %}
                                 <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
                           {% endif %}
-                        <a href="/task" class="btn btn-light">Start</a>
+                        <a href="/task/{{i}}" class="btn btn-light">Start</a>
                       </div>
             {% endfor %}
         {% endif %}

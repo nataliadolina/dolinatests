@@ -23,19 +23,18 @@ select {
 
 }
 </style>
+{%for j in length%}
 <div class="container">
     <div class="row">
-        <h3>sxdcfvgbhn</h3>
+        <h3>{{session['contents'][i][j]}}</h3>
     <div class="col item">
         <div class="col-2 item">
             <select class="dropdown">
-              <option value="" class="label">Setting</option>
-              <option value="1">Option 1</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
-              <option value="4">Option 4</option>
-              <option value="5">Option 5</option>
+              {%for el in session['choices'][i]%}
+              <option value={{el}}>{{el}}</option>
+                {%endfor%}
             </select>
         </div>
 </div>
+{%endfor%}
 {%endblock%}

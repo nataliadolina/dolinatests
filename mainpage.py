@@ -135,6 +135,7 @@ def all_tasks():
     session['choices'] = choices
     correct_choices = [x[4] for x in all]
     session['correct'] = correct_choices
+    print(session['titles'], session['contents'], session['choices'], session['correct'])
     return render_template('tasks.html', flag=True, n=n)
 
 
@@ -144,6 +145,15 @@ def delete_tasks(id):
         return redirect('/login')
     nm.delete(id)
     return redirect('/all_tasks')
+
+
+@app.route('/task/<int:id>', methods=['GET', 'POST'])
+def task(id):
+    if 'username' not in session:
+        return redirect('/login')
+    length = list(range(len(session['contents'][id])))
+    print(length)
+    return render_template('task.html', i=id, length=length)
 
 
 if __name__ == '__main__':
