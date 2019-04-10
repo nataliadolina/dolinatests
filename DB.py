@@ -31,10 +31,9 @@ class UsersModel:
     def get_connection(self):
         return self.connection
 
-    def exists(self, user_name, password_hash):
+    def exists(self, user_name):
         cursor = self.connection.cursor()
-        password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
-        cursor.execute("SELECT * FROM users WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
+        cursor.execute("SELECT * FROM users WHERE user_name = ?", user_name)
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 

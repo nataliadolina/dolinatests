@@ -41,7 +41,7 @@ def registration():
     form = RegistrateForm()
     if form.validate_on_submit():
         f1, f2 = form.username.data, form.password.data
-        exists = users_base.exists(f1, f2)
+        exists = users_base.exists(f1)
         if exists[0]:
             form.username.data = ''
             return render_template('registration.html',
@@ -53,7 +53,7 @@ def registration():
         else:
             session['username'] = form.username.data
             users_base.insert(form.username.data, form.password.data)
-            session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
+            session['user_id'] = users_base.exists(form.username.data)[1]
             return redirect('/index')
     return render_template('registration.html', text='', form=form)
 
