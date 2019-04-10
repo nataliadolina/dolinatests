@@ -31,9 +31,10 @@ class UsersModel:
     def get_connection(self):
         return self.connection
 
-    def exists(self, user_name):
+    def exists(self, user_name, password_hash):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE user_name = ?", user_name)
+        password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
+        cursor.execute("SELECT * FROM users WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
         row = cursor.fetchone()
         return (True, row[0]) if row else (False,)
 
@@ -91,12 +92,6 @@ class TasksModel:
         cursor.close()
         self.connection.commit()
 
-    def get(self, user_id):
-        cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE id = ?", (str(user_id),))
-        row = cursor.fetchone()
-        return row
-
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:
@@ -111,3 +106,39 @@ class TasksModel:
         cursor.execute('''DELETE FROM tasks WHERE id = ?''', (str(news_id),))
         cursor.close()
         self.connection.commit()
+
+
+class ScoresModel:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
+
+    def init_table(self):
+        cursor = self.connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS scores
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     num_tasks INTEGER
+                                     num_correct INTEGER
+                                     task_id INTEGER 
+                             )''')
+        cursor.close()
+        self.connection.commit()
+
+    def get_connection(self):
+        return self.connection
+
+    def insert(self, num_tasks, num_correct, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO scores
+                          (num_tasks, num_correct, task_id,) 
+                          VALUES (?,?,?)''', (str(num_tasks), str(num_correct), str(task_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def get_all(self, task_id=None):
+        cursor = self.connection.cursor()
+        if task_id:
+            cursor.execute("SELECT * FROM scores WHERE task_id = ?", str(task_id))
+        else:
+            cursor.execute("SELECT * FROM scores")
+        rows = cursor.fetchall()
+        return rows

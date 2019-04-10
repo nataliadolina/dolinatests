@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
-from DB import DB, UsersModel, TasksModel
+from DB import DB, UsersModel, TasksModel, ScoresModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -19,6 +19,8 @@ class LoginForm(FlaskForm):
 base = DB()
 users_base = UsersModel(base)
 users_base.init_table()
+scores = ScoresModel(base)
+scores.init_table()
 
 
 class RegistrateForm(FlaskForm):
@@ -41,7 +43,7 @@ def registration():
     form = RegistrateForm()
     if form.validate_on_submit():
         f1, f2 = form.username.data, form.password.data
-        exists = users_base.exists(f1)
+        exists = users_base.exists(f1, f2)
         if exists[0]:
             form.username.data = ''
             return render_template('registration.html',
@@ -53,7 +55,7 @@ def registration():
         else:
             session['username'] = form.username.data
             users_base.insert(form.username.data, form.password.data)
-            session['user_id'] = users_base.exists(form.username.data)[1]
+            session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
             return redirect('/index')
     return render_template('registration.html', text='', form=form)
 
@@ -145,7 +147,14 @@ def delete_tasks(id):
 def task(id):
     if 'username' not in session:
         return redirect('/login')
-    length = list(range(len(session['contents'][id])))
+    k = 0
+    l = len(session['contents'][id])
+    length = list(range(l))
+    if request.method == 'POST':
+        for i in length:
+            if request.form[str(i)] == session['correct'][id][i]:
+                k += 1
+        scores.insert(l, k, id)
     return render_template('task.html', i=id, length=length)
 
 
