@@ -113,7 +113,7 @@ def add_task():
 def all_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    if id == -1:
+    if id == 0:
         all = tasks_model.get_all(session['user_id'])
     else:
         all = tasks_model.get_all(id)
