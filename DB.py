@@ -116,8 +116,8 @@ class ScoresModel:
         cursor = self.connection.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS scores
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     num_tasks INTEGER
-                                     num_correct INTEGER
+                                     num_tasks INTEGER,
+                                     num_correct INTEGER,
                                      task_id INTEGER 
                              )''')
         cursor.close()
