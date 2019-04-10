@@ -129,7 +129,7 @@ class ScoresModel:
     def insert(self, num_tasks, num_correct, task_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO scores
-                          (num_tasks, num_correct, task_id,) 
+                          (num_tasks, num_correct, task_id)
                           VALUES (?,?,?)''', (str(num_tasks), str(num_correct), str(task_id)))
         cursor.close()
         self.connection.commit()

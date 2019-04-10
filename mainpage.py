@@ -130,7 +130,7 @@ def all_tasks():
         choices1.append(arr)
         arr = []
     session['choices'] = choices1
-    correct_choices = [x[4] for x in all]
+    correct_choices = [x[4].split('\n') for x in all]
     session['correct'] = correct_choices
     return render_template('tasks.html', flag=True, n=n)
 
@@ -152,9 +152,9 @@ def task(id):
     length = list(range(l))
     if request.method == 'POST':
         for i in length:
-            if request.form[str(i)] == session['correct'][id][i]:
+            if request.form[str(i)] == session['correct'][id][i].strip():
                 k += 1
-        scores.insert(l, k, id)
+        scores.insert(l, k, session['task_id'][id])
     return render_template('task.html', i=id, length=length)
 
 
