@@ -118,8 +118,8 @@ class ScoresModel:
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      num_tasks INTEGER,
                                      num_correct INTEGER,
-                                     task_id INTEGER 
-                             )''')
+                                     task_id INTEGER
+                                     )''')
         cursor.close()
         self.connection.commit()
 

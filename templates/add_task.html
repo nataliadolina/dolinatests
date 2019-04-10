@@ -34,12 +34,12 @@ color:#98FB98;
 
 
 </style>
-    <h1>Add task</h1>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <div class="container">
             <div class="row">
                 <div class="col-lg-4">
+                    <h1>Add task</h1>
             <form>
             <p>
                 {{ form.title.label }}<br>
@@ -79,15 +79,16 @@ color:#98FB98;
             </p>
             <p>{{ form.submit() }}</p>
             </form>
+            </div>
             <div class="col-lg-4">
             </div>
             <div class="col-lg-4">
-            <div class="form-group form-check">
-                {% for i in users %}
-                <input type="checkbox" class="form-check-input" id="acceptRules" name={{i[0]}} value = {{i[0]}}>
-                <label class="form-check-label" for="acceptRules">{{i[1]}}</label>
-                <h4>  </h4>
-                {% endfor %}
+                <div class="form-group form-check">
+                    {% for i in users %}
+                    <input type="checkbox" class="form-check-input" id="acceptRules" name={{i[0]}} value = {{i[0]}}>
+                    <label class="form-check-label" for="acceptRules">{{i[1]}}</label>
+                    <h4>  </h4>
+                    {% endfor %}
                 </div>
             </div>
             </div>

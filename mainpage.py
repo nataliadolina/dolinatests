@@ -34,7 +34,7 @@ class AddTaskForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice', validators=[DataRequired()])
-    correct = TextAreaField('answer choice', validators=[DataRequired()])
+    correct = TextAreaField('correct answer', validators=[DataRequired()])
     submit = SubmitField('Add')
 
 
@@ -109,11 +109,14 @@ def add_task():
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
 
-@app.route('/all_tasks', methods=['GET', 'POST'])
-def all_tasks():
+@app.route('/all_tasks/<int:id>', methods=['GET', 'POST'])
+def all_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    all = tasks_model.get_all(session['user_id'])
+    if id == -1:
+        all = tasks_model.get_all(session['user_id'])
+    else:
+        all = tasks_model.get_all(id)
     titles = [x[1] for x in all]
     n = range(len(titles))
     ides_tasks = [x[0] for x in all]
@@ -156,6 +159,12 @@ def task(id):
                 k += 1
         scores.insert(l, k, session['task_id'][id])
     return render_template('task.html', i=id, length=length)
+
+
+@app.route('/all_users')
+def users():
+    l = list(range(len(all_users)))
+    return render_template('all_users.html', length=l, users=all_users)
 
 
 if __name__ == '__main__':
