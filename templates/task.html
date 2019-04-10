@@ -33,7 +33,7 @@ select {
             <select class="dropdown" name={{j}}>
               {%for el in session['choices'][i][j]%}
                 {%for element in el%}
-              <option value={{element}}>{{element}}</option>
+              <option value={{element}} selected="selected">{{element}}</option>
                 {%endfor%}
                 {%endfor%}
             </select>

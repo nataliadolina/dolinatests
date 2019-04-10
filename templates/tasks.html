@@ -12,7 +12,7 @@
                 <div class="card" name={{i}} value= {{i}} style="width: 18rem;">
                       <div class="card-body">
                         <h5 class="card-title">{{session['titles'][i]}}</h5>
-                        <p class="card-text">{{session['contents'][i][0]}}</p>
+                        <p class="card-text">{{session['scores'][i]}}</p>
                           {% if session['user_id'] == 1 or session['user_id'] == 2 %}
                                 <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
                           {% endif %}

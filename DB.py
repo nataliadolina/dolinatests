@@ -142,3 +142,9 @@ class ScoresModel:
             cursor.execute("SELECT * FROM scores")
         rows = cursor.fetchall()
         return rows
+
+    def update(self, task_id, k):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE scores SET num_correct=? WHERE task_id=?', (str(k), str(task_id)))
+        cursor.close()
+        self.connection.commit()

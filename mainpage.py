@@ -135,6 +135,18 @@ def all_tasks(id):
     session['choices'] = choices1
     correct_choices = [x[4].split('\n') for x in all]
     session['correct'] = correct_choices
+    sc = scores.get_all()
+    scores_id = [i[-1] for i in sc]
+    scores1 = []
+    for i in ides_tasks:
+        if i in scores_id:
+            n_correct = sc[scores_id.index(i)][-2]
+            n_all = sc[scores_id.index(i)][-3]
+        else:
+            n_correct = 0
+            n_all = len(session['contents'][ides_tasks.index(i)])
+        scores1.append(str(n_correct) + '/' + str(n_all))
+    session['scores'] = scores1
     return render_template('tasks.html', flag=True, n=n)
 
 
@@ -154,10 +166,15 @@ def task(id):
     l = len(session['contents'][id])
     length = list(range(l))
     if request.method == 'POST':
+        session['scores'] = []
         for i in length:
             if request.form[str(i)] == session['correct'][id][i].strip():
                 k += 1
-        scores.insert(l, k, session['task_id'][id])
+        if session['task_id'][id] not in [i[-1] for i in scores.get_all()]:
+            scores.insert(l, k, session['task_id'][id])
+        else:
+            scores.update(session['task_id'][id], k)
+            print(scores.get_all())
     return render_template('task.html', i=id, length=length)
 
 
