@@ -114,6 +114,7 @@ class ScoresModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS scores')
         cursor.execute('''CREATE TABLE IF NOT EXISTS scores
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      num_tasks INTEGER,
