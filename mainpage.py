@@ -19,7 +19,6 @@ class LoginForm(FlaskForm):
 base = DB()
 users_base = UsersModel(base)
 users_base.init_table()
-print(users_base.get_all())
 
 
 class RegistrateForm(FlaskForm):
@@ -53,8 +52,7 @@ def registration():
                                    text='Passwords do not match. Please check your spelling and try again', form=form)
         else:
             session['username'] = form.username.data
-            nm = UsersModel(base)
-            nm.insert(form.username.data, form.password.data)
+            users_base.insert(form.username.data, form.password.data)
             session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
             return redirect('/index')
     return render_template('registration.html', text='', form=form)
@@ -87,14 +85,9 @@ def tasks():
         return redirect('/login')
 
 
-users = [x[1] for x in users_base.get_all()]
-ides = [x[0] for x in users_base.get_all()]
-ides_names = {}
-for i in range(len(users)):
-    ides_names[ides[i]] = users[i]
-ides_names = sorted(list(ides_names.items()), key=lambda x: x[1])
-nm = TasksModel(base)
-nm.init_table()
+tasks_model = TasksModel(base)
+tasks_model.init_table()
+all_users = users_base.get_all()
 
 
 @app.route('/add_task', methods=['GET', 'POST'])
@@ -107,23 +100,18 @@ def add_task():
         sentence = form.sentence.data
         choice = form.choice.data
         correct = form.correct.data
-        for i in ides:
+        for i in [j[0] for j in all_users]:
             if request.form.get(str(i)):
-                print(request.form.get(str(i)))
-                nm.insert(title, sentence, choice, correct, i)
-                print(nm.get_all())
+                tasks_model.insert(title, sentence, choice, correct, i)
         return redirect("/index")
-    return render_template('add_task.html', form=form, username=session['username'], users=ides_names)
-
-
-print(nm.get_all())
+    return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
 
 @app.route('/all_tasks', methods=['GET', 'POST'])
 def all_tasks():
     if 'username' not in session:
         return redirect('/login')
-    all = nm.get_all(session['user_id'])
+    all = tasks_model.get_all(session['user_id'])
     titles = [x[1] for x in all]
     n = range(len(titles))
     ides_tasks = [x[0] for x in all]
@@ -142,7 +130,6 @@ def all_tasks():
     session['choices'] = choices1
     correct_choices = [x[4] for x in all]
     session['correct'] = correct_choices
-    print(session['titles'], session['contents'], session['choices'], session['correct'])
     return render_template('tasks.html', flag=True, n=n)
 
 
@@ -150,7 +137,7 @@ def all_tasks():
 def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    nm.delete(id)
+    tasks_model.delete(id)
     return redirect('/all_tasks')
 
 
@@ -159,7 +146,6 @@ def task(id):
     if 'username' not in session:
         return redirect('/login')
     length = list(range(len(session['contents'][id])))
-    print(length)
     return render_template('task.html', i=id, length=length)
 
 

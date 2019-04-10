@@ -46,7 +46,7 @@ class UsersModel:
 
     def get_all(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM users")
+        cursor.execute("SELECT * FROM users ORDER BY user_name")
         rows = cursor.fetchall()
         return rows
 
