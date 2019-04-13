@@ -149,3 +149,46 @@ class ScoresModel:
         cursor.execute('UPDATE scores SET num_correct=? WHERE task_id=?', (str(k), str(task_id)))
         cursor.close()
         self.connection.commit()
+
+
+class ProgressModel:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
+
+    def init_table(self):
+        cursor = self.connection.cursor()
+        #cursor.execute('DROP TABLE IF EXISTS progress')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS progress
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     answers VARCHAR(10000),
+                                     correct VARCHAR(10000),
+                                     task_id INTEGER
+                                     )''')
+        cursor.close()
+        self.connection.commit()
+
+    def get_connection(self):
+        return self.connection
+
+    def insert(self, answers, correct,  task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO progress
+                          (answers, correct, task_id)
+                          VALUES (?,?,?)''', (str(answers), str(correct), str(task_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def get_all(self, task_id=None):
+        cursor = self.connection.cursor()
+        if task_id:
+            cursor.execute("SELECT * FROM progress WHERE task_id = ?", str(task_id))
+        else:
+            cursor.execute("SELECT * FROM progress")
+        rows = cursor.fetchall()
+        return rows
+
+    def update(self, answer, correct, id):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE progress SET answers=? correct=? WHERE task_id=?', (str(answer), str(correct), str(id)))
+        cursor.close()
+        self.connection.commit()

@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
-from DB import DB, UsersModel, TasksModel, ScoresModel
+from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -158,6 +158,10 @@ def delete_tasks(id):
     return redirect('/all_tasks')
 
 
+progress = ProgressModel(base)
+progress.init_table()
+
+
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
 def task(id):
     if 'username' not in session:
@@ -165,17 +169,29 @@ def task(id):
     k = 0
     l = len(session['contents'][id])
     length = list(range(l))
+    answers = ''
+    correctness = ''
+    task_id = session['task_id'][id]
+    correct = progress.get_all(task_id)
     if request.method == 'POST':
         session['scores'] = []
         for i in length:
-            if request.form[str(i)] == session['correct'][id][i].strip():
+            ans = request.form[str(i)]
+            if ans == session['correct'][id][i].strip():
                 k += 1
+                correctness += '' + 'true'
+            else:
+                correctness += '' + 'false'
+            answers += " " + ans
+        if task_id in [i[-1] for i in progress.get_all()]:
+            progress.update(answers, correctness, task_id)
+        else:
+            progress.insert(answers, correctness, task_id)
         if session['task_id'][id] not in [i[-1] for i in scores.get_all()]:
-            scores.insert(l, k, session['task_id'][id])
+            scores.insert(l, k, task_id)
         else:
             scores.update(session['task_id'][id], k)
-            print(scores.get_all())
-    return render_template('task.html', i=id, length=length)
+    return render_template('task.html', i=id, length=length, correct=correct.split())
 
 
 @app.route('/all_users')
