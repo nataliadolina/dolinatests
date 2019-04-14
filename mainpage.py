@@ -155,6 +155,8 @@ def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
     tasks_model.delete(id)
+    scores.delete(id)
+    progress.delete(id)
     return redirect('/all_tasks')
 
 
@@ -172,7 +174,6 @@ def task(id):
     answers = ''
     correctness = ''
     task_id = session['task_id'][id]
-    correct = progress.get_all(task_id)
     c = []
     if request.method == 'POST':
         session['scores'] = []
@@ -185,16 +186,17 @@ def task(id):
                 correctness += ' ' + 'false'
             answers += " " + ans
         print([i[-1] for i in scores.get_all()])
-        if task_id in [i[-1] for i in scores.get_all()]:
+        if task_id in [i[-1] for i in progress.get_all()]:
             progress.update(answers, correctness, task_id)
         else:
             progress.insert(answers, correctness, task_id)
-        if session['task_id'][id] not in [i[-1] for i in scores.get_all()]:
+        if task_id not in [i[-1] for i in scores.get_all()]:
             scores.insert(l, k, task_id)
         else:
             scores.update(session['task_id'][id], k)
         correct = progress.get_all(task_id)
         print(progress.get_all())
+        print(scores.get_all())
         if correct:
             c = [i[-2].split() for i in correct][id]
         else:

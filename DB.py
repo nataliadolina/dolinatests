@@ -150,6 +150,12 @@ class ScoresModel:
         cursor.close()
         self.connection.commit()
 
+    def delete(self, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM scores WHERE task_id = ?''', (str(task_id),))
+        cursor.close()
+        self.connection.commit()
+
 
 class ProgressModel:
     def __init__(self, connection):
@@ -190,5 +196,11 @@ class ProgressModel:
     def update(self, answer, correct, id):
         cursor = self.connection.cursor()
         cursor.execute('UPDATE progress SET answers=?, correct=? WHERE task_id = ?', (answer, correct, str(id),))
+        cursor.close()
+        self.connection.commit()
+
+    def delete(self, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM progress WHERE task_id = ?''', (str(task_id),))
         cursor.close()
         self.connection.commit()
