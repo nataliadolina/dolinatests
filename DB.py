@@ -95,7 +95,7 @@ class TasksModel:
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:
-            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", str(user_id))
+            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (str(user_id),))
         else:
             cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
@@ -138,7 +138,7 @@ class ScoresModel:
     def get_all(self, task_id=None):
         cursor = self.connection.cursor()
         if task_id:
-            cursor.execute("SELECT * FROM scores WHERE task_id = ?", str(task_id))
+            cursor.execute("SELECT * FROM scores WHERE task_id = ?", (str(task_id),))
         else:
             cursor.execute("SELECT * FROM scores")
         rows = cursor.fetchall()
@@ -157,7 +157,7 @@ class ProgressModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        #cursor.execute('DROP TABLE IF EXISTS progress')
+        # cursor.execute('DROP TABLE IF EXISTS progress')
         cursor.execute('''CREATE TABLE IF NOT EXISTS progress
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      answers VARCHAR(10000),
@@ -170,7 +170,7 @@ class ProgressModel:
     def get_connection(self):
         return self.connection
 
-    def insert(self, answers, correct,  task_id):
+    def insert(self, answers, correct, task_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO progress
                           (answers, correct, task_id)
@@ -181,7 +181,7 @@ class ProgressModel:
     def get_all(self, task_id=None):
         cursor = self.connection.cursor()
         if task_id:
-            cursor.execute("SELECT * FROM progress WHERE task_id = ?", str(task_id))
+            cursor.execute("SELECT * FROM progress WHERE task_id = ?", (str(task_id),))
         else:
             cursor.execute("SELECT * FROM progress")
         rows = cursor.fetchall()
@@ -189,6 +189,6 @@ class ProgressModel:
 
     def update(self, answer, correct, id):
         cursor = self.connection.cursor()
-        cursor.execute('UPDATE progress SET answers=? correct=? WHERE task_id=?', (str(answer), str(correct), str(id)))
+        cursor.execute('UPDATE progress SET answers=?, correct=? WHERE task_id = ?', (answer, correct, str(id),))
         cursor.close()
         self.connection.commit()

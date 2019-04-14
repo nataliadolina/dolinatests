@@ -173,17 +173,19 @@ def task(id):
     correctness = ''
     task_id = session['task_id'][id]
     correct = progress.get_all(task_id)
+    c = []
     if request.method == 'POST':
         session['scores'] = []
         for i in length:
             ans = request.form[str(i)]
             if ans == session['correct'][id][i].strip():
                 k += 1
-                correctness += '' + 'true'
+                correctness += ' ' + 'true'
             else:
-                correctness += '' + 'false'
+                correctness += ' ' + 'false'
             answers += " " + ans
-        if task_id in [i[-1] for i in progress.get_all()]:
+        print([i[-1] for i in scores.get_all()])
+        if task_id in [i[-1] for i in scores.get_all()]:
             progress.update(answers, correctness, task_id)
         else:
             progress.insert(answers, correctness, task_id)
@@ -191,7 +193,13 @@ def task(id):
             scores.insert(l, k, task_id)
         else:
             scores.update(session['task_id'][id], k)
-    return render_template('task.html', i=id, length=length, correct=correct.split())
+        correct = progress.get_all(task_id)
+        print(progress.get_all())
+        if correct:
+            c = [i[-2].split() for i in correct][id]
+        else:
+            c = []
+    return render_template('task.html', i=id, length=length, correct=c)
 
 
 @app.route('/all_users')
