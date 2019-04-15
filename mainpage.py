@@ -179,7 +179,9 @@ def task(id):
         c = [i[-2].split() for i in correct][id]
     else:
         c = []
+    answer = correct[0][1].split()
 
+    #print(answer)
     if request.method == 'POST':
         session['scores'] = []
         for i in length:
@@ -204,7 +206,11 @@ def task(id):
             c = [i[-2].split() for i in correct][id]
         else:
             c = []
-    return render_template('task.html', i=id, length=length, correct=c)
+        if len(correct[0]) >= 2:
+            answer = correct[0][1].split()
+        else:
+            answer = []
+    return render_template('task.html', i=id, length=length, correct=c, answer=answer)
 
 
 @app.route('/all_users')

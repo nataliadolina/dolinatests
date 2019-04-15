@@ -41,7 +41,15 @@ select {
             <select class="dropdown" name={{j}}>
               {%for el in session['choices'][i][j]%}
                 {%for element in el%}
-              <option value={{element}}>{{element}}</option>
+                {%if answer%}
+                {%if element == answer[j]%}
+              <option selected value={{element}}>{{element}}</option>
+                {%else%}
+                <option value={{element}}>{{element}}</option>
+                {%endif%}
+                {%else%}
+                <option value={{element}}>{{element}}</option>
+                {%endif%}
                 {%endfor%}
                 {%endfor%}
             </select>
