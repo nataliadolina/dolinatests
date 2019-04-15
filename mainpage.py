@@ -174,7 +174,12 @@ def task(id):
     answers = ''
     correctness = ''
     task_id = session['task_id'][id]
-    c = []
+    correct = progress.get_all(task_id)
+    if correct:
+        c = [i[-2].split() for i in correct][id]
+    else:
+        c = []
+
     if request.method == 'POST':
         session['scores'] = []
         for i in length:
@@ -195,8 +200,6 @@ def task(id):
         else:
             scores.update(session['task_id'][id], k)
         correct = progress.get_all(task_id)
-        print(progress.get_all())
-        print(scores.get_all())
         if correct:
             c = [i[-2].split() for i in correct][id]
         else:

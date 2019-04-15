@@ -1,25 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container"  >
+<div class="container">
     <div class="jumbotron" style="background-image: url(/static/gradientyellow.jpg); background-size: 100%;">
-      <h1 class="display-4">My tasks</h1>
-      <p class="lead">
-          <a href="/all_tasks/0" class="btn btn-outline-dark" role="button">Show</a>
-      </p>
+        <h1 class="display-4">My tasks</h1>
+        <p class="lead">
+            <a href="/all_tasks/0" class="btn btn-outline-dark" role="button">Show</a>
+        </p>
     </div>
-        {% if flag %}
-            {% for i in n%}
-                <div class="card" name={{i}} value= {{i}} style="width: 18rem;">
-                      <div class="card-body">
-                        <h5 class="card-title">{{session['titles'][i]}}</h5>
-                        <p class="card-text">{{session['scores'][i]}}</p>
-                          {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                                <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
-                          {% endif %}
-                        <a href="/task/{{i}}" class="btn btn-light">Start</a>
-                      </div>
-            {% endfor %}
-        {% endif %}
+    {% if flag %}
+    {% for i in n%}
+    <div class="card" name={{i}} value={{i}} style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{session['titles'][i]}}</h5>
+            <p class="card-text">{{session['scores'][i]}}</p>
+            {% if session['user_id'] == 1 or session['user_id'] == 2 %}
+            <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
+            {% endif %}
+            <a href="/task/{{i}}" class="btn btn-light">Start</a>
+        </div>
     </div>
+    <h3 class="display-4"></h3>
+    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
