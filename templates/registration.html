@@ -26,49 +26,48 @@ input:focus, textarea:focus {
     border:1px solid #98FB98;
 
 }
+
+
 </style>
 <h1>Registration</h1>
-    <div class="container bgcont center-block">
-        <div class="row background-row">
+<div class="container bgcont center-block">
+    <div class="row background-row">
 
-            <form action="" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                <p>
-                    {{ form.username.label }}<br>
-                    {{ form.username }}<br>
-                    {% for error in form.username.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.password.label }}<br>
-                    {{ form.password }}<br>
-                    {% for error in form.password.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
-                <p>
-                    {{ form.repeatpassword.label }}<br>
-                    {{ form.repeatpassword }}<br>
-                    {% for error in form.repeatpassword.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
-                <p>{{ form.submit() }}</p>
-            </form>
-            <a href="/login" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign in</a>
-            {% if text != ''%}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                  {{ text }}
-                </div>
-            {% endif %}
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.username.label }}<br>
+                {{ form.username }}<br>
+                {% for error in form.username.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password }}<br>
+                {% for error in form.password.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+            <p>
+                {{ form.repeatpassword.label }}<br>
+                {{ form.repeatpassword }}<br>
+                {% for error in form.repeatpassword.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+            <p>{{ form.submit() }}</p>
+        </form>
+        <a href="/login" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign in</a>
+        {% if text != ''%}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ text }}
         </div>
+        {% endif %}
     </div>
+</div>
 </body>
 </html>

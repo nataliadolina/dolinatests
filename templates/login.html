@@ -25,6 +25,8 @@ color:#98FB98;
 input:focus, textarea:focus {
     border:1px solid #98FB98;
 
+
+
 </style>
 <h1>Authorization</h1>
 <div class="container bgcont center-block">
@@ -40,7 +42,6 @@ input:focus, textarea:focus {
                 {{ error }}
             </div>
             {% endfor %}
-            </p>
             <p>
                 {{ form.password.label }}<br>
                 {{ form.password }}<br>
@@ -49,8 +50,6 @@ input:focus, textarea:focus {
                 {{ error }}
             </div>
             {% endfor %}
-            </p>
-            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
             <p>{{ form.submit() }}</p>
         </form>
         <a href="/registration" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign up</a>

@@ -22,42 +22,43 @@ select {
     white-space: nowrap;
 
 }
+
 </style>
 {%for j in length%}
 <form method="post">
-<div class="container">
-    <div class="row">
-        {%if correct%}
+    <div class="container">
+        <div class="row">
+            {%if correct%}
             {%if correct[j] == 'true'%}
             <span class="badge badge-success">+</span><h5>{{session['contents'][i][j]}}</h5>
             {% else %}
             <span class="badge badge-danger">-</span><h5>{{session['contents'][i][j]}}</h5>
             {%endif%}
-        {% else %}
+            {% else %}
             <h5>{{session['contents'][i][j]}}</h5>
-        {%endif%}
-    <div class="col item">
-        <div class="col-2 item">
-            <select class="dropdown" name={{j}}>
-              {%for el in session['choices'][i][j]%}
-                {%for element in el%}
-                {%if answer%}
-                {%if element == answer[j]%}
-              <option selected value={{element}}>{{element}}</option>
-                {%else%}
-                <option value={{element}}>{{element}}</option>
-                {%endif%}
-                {%else%}
-                <option value={{element}}>{{element}}</option>
-                {%endif%}
-                {%endfor%}
-                {%endfor%}
-            </select>
+            {%endif%}
+            <div class="col item">
+                <div class="col-2 item">
+                    <select class="dropdown" name={{j}}>
+                        {%for el in session['choices'][i][j]%}
+                        {%for element in el%}
+                        {%if answer%}
+                        {%if element == answer[j]%}
+                        <option selected value={{element}}>{{element}}</option>
+                        {%else%}
+                        <option value={{element}}>{{element}}</option>
+                        {%endif%}
+                        {%else%}
+                        <option value={{element}}>{{element}}</option>
+                        {%endif%}
+                        {%endfor%}
+                        {%endfor%}
+                    </select>
+                </div>
+            </div>
         </div>
-</div>
-</div>
-</div>
-{%endfor%}
+    </div>
+    {%endfor%}
     <button type="submit" class="btn btn-dark">Done</button>
 </form>
 

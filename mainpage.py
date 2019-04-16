@@ -12,7 +12,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 class LoginForm(FlaskForm):
     username = StringField('Login', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember me')
     submit = SubmitField('Enter')
 
 
@@ -56,7 +55,7 @@ def registration():
             session['username'] = form.username.data
             users_base.insert(form.username.data, form.password.data)
             session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
-            return redirect('/index')
+            return redirect('/homepage')
     return render_template('registration.html', text='', form=form)
 
 
@@ -68,21 +67,16 @@ def login():
         if exists[0]:
             session['username'] = request.form['username']
             session['user_id'] = exists[1]
-            return redirect('/index')
+            return redirect('/homepage')
         return render_template('login.html', title='Authorization', text='invalid login or password', form=form)
     return render_template('login.html', title='Authorization', text='', form=form)
-
-
-@app.route('/index', methods=['GET', 'POST'])
-def index():
-    return render_template('tasks.html')
 
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
     if 'username' in session:
-        return render_template('tasks.html', flag=False)
+        return redirect('/all_tasks/0')
     else:
         return redirect('/login')
 
@@ -117,6 +111,10 @@ def all_tasks(id):
         all = tasks_model.get_all(session['user_id'])
     else:
         all = tasks_model.get_all(id)
+    if id != 0:
+        username = users_base.get(id)[1]
+    else:
+        username = ''
     titles = [x[1] for x in all]
     n = range(len(titles))
     ides_tasks = [x[0] for x in all]
@@ -147,7 +145,7 @@ def all_tasks(id):
             n_all = len(session['contents'][ides_tasks.index(i)])
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
-    return render_template('tasks.html', flag=True, n=n)
+    return render_template('tasks.html', flag=True, n=n, name=username)
 
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
@@ -215,6 +213,13 @@ def task(id):
 def users():
     l = list(range(len(all_users)))
     return render_template('all_users.html', length=l, users=all_users)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', 0)
+    session.pop('user_id', 0)
+    return redirect('/login')
 
 
 if __name__ == '__main__':
