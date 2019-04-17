@@ -41,6 +41,11 @@ color:#98FB98;
         <div class="row">
             <div class="col-lg-4">
                 <h1>Add task</h1>
+                {% if text %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ text }}
+                </div>
+                {% endif %}
                 <form>
                     <p>
                         {{ form.title.label }}<br>

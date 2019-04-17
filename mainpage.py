@@ -96,10 +96,15 @@ def add_task():
         sentence = form.sentence.data
         choice = form.choice.data
         correct = form.correct.data
-        for i in [j[0] for j in all_users]:
-            if request.form.get(str(i)):
-                tasks_model.insert(title, sentence, choice, correct, i)
-        return redirect("/index")
+        if len(sentence.split('\n')) != len(choice.split('\n')) or len(correct.split('\n')) != len(choice.split('\n')):
+            return render_template('add_task.html', form=form, username=session['username'], users=all_users,
+                                   text='invalid task. Number of strings in labels "sentences",'
+                                        ' "answer choice", "correct answer" must be the same')
+        else:
+            for i in [j[0] for j in all_users]:
+                if request.form.get(str(i)):
+                    tasks_model.insert(title, sentence, choice, correct, i)
+            return redirect("/homepage")
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
 
@@ -155,11 +160,12 @@ def delete_tasks(id):
     tasks_model.delete(id)
     scores.delete(id)
     progress.delete(id)
-    return redirect('/all_tasks')
+    return redirect('/all_tasks/{}'.format(session['user_id']))
 
 
 progress = ProgressModel(base)
 progress.init_table()
+print(tasks_model.get_all())
 
 
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
@@ -175,18 +181,25 @@ def task(id):
     correct = progress.get_all(task_id)
     if correct:
         c = correct[0][-2].split()
+        answer = correct[0][1].split()
     else:
         c = []
-    answer = correct[0][1].split()
+        answer = []
     if request.method == 'POST':
         session['scores'] = []
+        ans1 = ''
         for i in length:
             ans = request.form[str(i)]
-            if ans == session['correct'][id][i].strip():
-                k += 1
-                correctness += ' ' + 'true'
-            else:
+            try:
+                ans1 = session['correct'][id][i].strip()
+            except Exception as e:
                 correctness += ' ' + 'false'
+            finally:
+                if ans == ans1:
+                    k += 1
+                    correctness += ' ' + 'true'
+                else:
+                    correctness += ' ' + 'false'
             answers += " " + ans
         print([i[-1] for i in scores.get_all()])
         if task_id in [i[-1] for i in progress.get_all()]:
@@ -206,7 +219,9 @@ def task(id):
             answer = correct[0][1].split()
         else:
             answer = []
-    return render_template('task.html', i=id, length=length, correct=c, answer=answer)
+        print(session['choices'])
+        print(session['choices'][id])
+    return render_template('task.html', i=id, length=length, correct=c, answer=answer, choices=session['choices'][id])
 
 
 @app.route('/all_users')

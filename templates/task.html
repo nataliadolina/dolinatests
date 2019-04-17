@@ -24,6 +24,13 @@ select {
 }
 
 </style>
+<div class="container">
+  <div class="row">
+    <div class="col-lg" style="width: 700px;margin: 7px;">
+<p align="left">
+    <h1> </h1>
+<h6>Select the correct word that is missing in the sentences below</h6>
+<h1> </h1>
 {%for j in length%}
 <form method="post">
     <div class="container">
@@ -40,26 +47,28 @@ select {
             <div class="col item">
                 <div class="col-2 item">
                     <select class="dropdown" name={{j}}>
-                        {%for el in session['choices'][i][j]%}
-                        {%for element in el%}
+                        {%for element1 in choices[j]%}
                         {%if answer%}
-                        {%if element == answer[j]%}
-                        <option selected value={{element}}>{{element}}</option>
+                        {%if element1 == answer[j]%}
+                        <option selected value={{element1}}>{{element1}}</option>
                         {%else%}
-                        <option value={{element}}>{{element}}</option>
+                        <option value={{element1}}>{{element1}}</option>
                         {%endif%}
                         {%else%}
-                        <option value={{element}}>{{element}}</option>
+                        <option value={{element1}}>{{element1}}</option>
                         {%endif%}
-                        {%endfor%}
                         {%endfor%}
                     </select>
+                    <h1> </h1>
                 </div>
             </div>
         </div>
     </div>
     {%endfor%}
+    <h1> </h1>
     <button type="submit" class="btn btn-dark">Done</button>
 </form>
-
+</div>
+</div>
+</div>
 {%endblock%}
