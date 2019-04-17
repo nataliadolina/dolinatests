@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <meta charset="UTF-8">
     <title>Главная</title>
 </head>
@@ -33,33 +33,40 @@ body {
 	color: #78B0AE;
 }
 
+
 </style>
 <body>
 <div class="top_line">
-	<div class="container">
-      <div class="col-md-12">
-			<div class="row">
-				<div class="top_nav" style="background-color: #438a5e;">
-					<ul>
-						{% if "username" in session %}
+    <div class="container">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="top_nav" style="background-color: #438a5e;">
+                    <ul>
+                        {% if "username" in session %}
                         <li><a class="navbar-brand" href="/homepage"><h4>Home</h4></a></li>
-						<li><a class="navbar-brand" href="/registration"><h4>Registration</h4></a></li>
-						<li><a class="navbar-brand" href="/login"><h4>Authorization</h4></a></li>
+                        <li><a class="navbar-brand" href="/registration"><h4>Registration</h4></a></li>
+                        <li><a class="navbar-brand" href="/login"><h4>Authorization</h4></a></li>
                         {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-						<li><a class="navbar-brand" href="/add_task"><h4>Add task</h4></a></li>
-						<li><a class="navbar-brand" href="/all_users"><h4>All users</h4></a></li>
+                        <li><a class="navbar-brand" href="/add_task"><h4>Add task</h4></a></li>
+                        <li><a class="navbar-brand" href="/all_users"><h4>All users</h4></a></li>
                         {% endif %}
-						<li><a class="navbar-brand" href="/logout"><h4>{{session['username']}}</h4></a></li>
-          				{% endif %}
-					</ul>
-				</div>
-              </div>
+                        <li><a class="navbar-brand" href="/logout"><h4>{{session['username']}}</h4></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         </div>
-	</div>
+    </div>
 </div>
 {% block content %}{% endblock %}
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
