@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel
 
@@ -112,13 +112,13 @@ def add_task():
 def all_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    if id == 0:
-        all = tasks_model.get_all(session['user_id'])
-    else:
+    if id != 0 and session['user_id'] in [1, 2]:
         all = tasks_model.get_all(id)
-    if id != 0:
         username = users_base.get(id)[1]
     else:
+        id = 0
+    if id == 0:
+        all = tasks_model.get_all(session['user_id'])
         username = ''
     titles = [x[1] for x in all]
     n = range(len(titles))
@@ -165,7 +165,6 @@ def delete_tasks(id):
 
 progress = ProgressModel(base)
 progress.init_table()
-print(tasks_model.get_all())
 
 
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
