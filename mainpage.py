@@ -86,13 +86,23 @@ tasks_model.init_table()
 all_users = users_base.get_all()
 
 
-@app.route('/add_task', methods=['GET', 'POST'])
-def add_task():
+@app.route('/add_task/<string:title>', methods=['GET', 'POST'])
+def add_task(title):
     if 'username' not in session:
         return redirect('/login')
     form = AddTaskForm()
+    title2 = True
+    if not title.isalpha():
+        title2 = False
+    if title2:
+        title1, content, choices, correct_choice = tasks_model.get(title)[1:-1]
+        id = tasks_model.get(title)[0]
+        form.title.data = title1
+        form.sentence.data = content
+        form.choice.data = choices
+        form.correct.data = correct_choice
     if form.validate_on_submit():
-        title = form.title.data
+        title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
         correct = form.correct.data
@@ -100,16 +110,23 @@ def add_task():
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='invalid task. Number of strings in labels "sentences",'
                                         ' "answer choice", "correct answer" must be the same')
+        if not title2 and title1 in [i[1] for i in tasks_model.get_all()]:
+            return render_template('add_task.html', form=form, username=session['username'], users=all_users,
+                                   text='task with such title already exists')
         else:
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    tasks_model.insert(title, sentence, choice, correct, i)
+                    if not title2:
+                        tasks_model.insert(title1, sentence, choice, correct, i)
+                    else:
+                        tasks_model.update(title1, sentence, choice, correct, id)
             return redirect("/homepage")
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
 
 @app.route('/all_tasks/<int:id>', methods=['GET', 'POST'])
 def all_tasks(id):
+    all, username = '', ''
     if 'username' not in session:
         return redirect('/login')
     if id != 0 and session['user_id'] in [1, 2]:

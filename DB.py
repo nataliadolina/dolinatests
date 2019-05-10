@@ -92,6 +92,19 @@ class TasksModel:
         cursor.close()
         self.connection.commit()
 
+    def update(self, title, content, choices, correct, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE tasks SET title=?, content=?, choices=?, correct_choice=? WHERE id=?',
+                       (title, content, choices, correct, task_id,))
+        cursor.close()
+        self.connection.commit()
+
+    def get(self, title):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM tasks WHERE title = ?", (title,))
+        row = cursor.fetchone()
+        return row
+
     def get_all(self, user_id=None):
         cursor = self.connection.cursor()
         if user_id:

@@ -44,10 +44,9 @@ body {
                     <ul>
                         {% if "username" in session %}
                         <li><a class="navbar-brand" href="/homepage"><h4>Home</h4></a></li>
-                        <li><a class="navbar-brand" href="/registration"><h4>Registration</h4></a></li>
-                        <li><a class="navbar-brand" href="/login"><h4>Authorization</h4></a></li>
+                        <li><a class="navbar-brand" href="/login"><h4>Log out</h4></a></li>
                         {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                        <li><a class="navbar-brand" href="/add_task"><h4>Add task</h4></a></li>
+                        <li><a class="navbar-brand" href="/add_task/''"><h4>Add task</h4></a></li>
                         <li><a class="navbar-brand" href="/all_users"><h4>All users</h4></a></li>
                         {% endif %}
                         <li><a class="navbar-brand" href="/logout"><h4>{{session['username']}}</h4></a></li>
