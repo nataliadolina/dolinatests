@@ -10,25 +10,53 @@
         width: 15%;
     }
     p input{
-       width:1000px;
-        height:35px;
+       width:700px;
+        height:50px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
         background: white;
         border:1px solid #dedede;
         padding:10px;
         margin-top:3px;
         font-size:0.9em;
         color:#3a3a3a;
-}
+        }
+    input[type=submit] {
+        padding:5px 15px;
+        background:#FFFFE0;
+        border:0 none;
+        cursor:pointer;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        }
 a {text-decoration: none;
 color:#98FB98;
 }
 input:focus, textarea:focus {
-    border:1px solid #98FB98;
-</style>
-<h1>Authorization</h1>
-<div class="container bgcont center-block">
-    <div class="row background-row">
+    border:2px solid #FFA161;
+}
+ body{
+      background-image: url(static/gradientyellow.jpg);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      background-color: #464646;
+    }
+.jumbotron {
+    min-width: 850px;
+    background-color: transparent !important;
 
+.jumbotron {
+    padding: 5em inherit;
+}
+</style>
+<link rel="stylesheet" href="http://bootstraptema.ru/plugins/2015/bootstrap3/bootstrap.min.css" />
+<div class="container">
+<div class="row">
+<h1 class="text-center">Authorization</h1>
+<div class="col-md-6 col-lg-offset-3">
+    <div class="jumbotron">
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
             <p>
@@ -56,6 +84,8 @@ input:focus, textarea:focus {
         </div>
         {% endif %}
     </div>
+</div>
+</div>
 </div>
 </body>
 </html>
