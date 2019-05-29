@@ -1,9 +1,11 @@
+import sqlite3
+
 from flask import Flask, render_template, request, session
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
-from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel
+from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -20,6 +22,8 @@ users_base = UsersModel(base)
 users_base.init_table()
 scores = ScoresModel(base)
 scores.init_table()
+files_base = Files(base)
+files_base.init_table()
 
 
 class RegistrateForm(FlaskForm):
@@ -116,8 +120,15 @@ def add_task(title):
         else:
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
+                    if request.get('file'):
+                        file_input = open(request['file'], "rb")
+                        file = file_input.read()
+                        file_input.close()
+                        binary = sqlite3.Binary(file)
+                        files_base.insert(binary, ind)
                     if not title2:
                         tasks_model.insert(title1, sentence, choice, correct, i)
+                        ind = tasks_model.index()
                     else:
                         tasks_model.update(title1, sentence, choice, correct, id)
             return redirect("/homepage")
@@ -217,7 +228,6 @@ def task(id):
                 else:
                     correctness += ' ' + 'false'
             answers += " " + ans
-        print([i[-1] for i in scores.get_all()])
         if task_id in [i[-1] for i in progress.get_all()]:
             progress.update(answers, correctness, task_id)
         else:
@@ -235,8 +245,6 @@ def task(id):
             answer = correct[0][1].split()
         else:
             answer = []
-        print(session['choices'])
-        print(session['choices'][id])
     return render_template('task.html', i=id, length=length, correct=c, answer=answer, choices=session['choices'][id])
 
 

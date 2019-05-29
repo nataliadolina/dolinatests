@@ -84,6 +84,12 @@ class TasksModel:
     def get_connection(self):
         return self.connection
 
+    def index(self):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM tasks")
+        rows = cursor.fetchall()
+        return rows[-1][0]
+
     def insert(self, title, content, choices, correct, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO tasks
@@ -177,12 +183,12 @@ class ProgressModel:
     def init_table(self):
         cursor = self.connection.cursor()
         # cursor.execute('DROP TABLE IF EXISTS progress')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS progress
-                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     answers VARCHAR(10000),
-                                     correct VARCHAR(10000),
-                                     task_id INTEGER
-                                     )''')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS files
+                                       (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        answers VARCHAR(10000),
+                                        correct VARCHAR(10000),
+                                        task_id INTEGER
+                                        )''')
         cursor.close()
         self.connection.commit()
 
@@ -215,5 +221,53 @@ class ProgressModel:
     def delete(self, task_id):
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM progress WHERE task_id = ?''', (str(task_id),))
+        cursor.close()
+        self.connection.commit()
+
+
+class Files:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
+
+    def init_table(self):
+        cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS progress')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS files
+                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     file BLOB,
+                                     task_id INTEGER
+                                     )''')
+        cursor.close()
+        self.connection.commit()
+
+    def get_connection(self):
+        return self.connection
+
+    def insert(self, file, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO files
+                          (file, task_id)
+                          VALUES (?,?)''', ((file,), str(task_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def get_all(self, task_id=None):
+        cursor = self.connection.cursor()
+        if task_id:
+            cursor.execute("SELECT * FROM files WHERE task_id = ?", (str(task_id),))
+        else:
+            cursor.execute("SELECT * FROM files")
+        rows = cursor.fetchall()
+        return rows
+
+    def update(self, answer, correct, id):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE progress SET answers=?, correct=? WHERE task_id = ?', (answer, correct, str(id),))
+        cursor.close()
+        self.connection.commit()
+
+    def delete(self, task_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM files WHERE task_id = ?''', (str(task_id),))
         cursor.close()
         self.connection.commit()
