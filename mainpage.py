@@ -105,7 +105,7 @@ def add_task(title):
         form.sentence.data = content
         form.choice.data = choices
         form.correct.data = correct_choice
-    if form.validate_on_submit():
+    if request.method == 'POST':
         title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
@@ -118,14 +118,17 @@ def add_task(title):
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='task with such title already exists')
         else:
+            print(request.form)
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    if request.get('file'):
+                    '''
+                    if request.form.get('file'):
                         file_input = open(request['file'], "rb")
                         file = file_input.read()
                         file_input.close()
                         binary = sqlite3.Binary(file)
                         files_base.insert(binary, ind)
+                        '''
                     if not title2:
                         tasks_model.insert(title1, sentence, choice, correct, i)
                         ind = tasks_model.index()

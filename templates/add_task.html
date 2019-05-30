@@ -38,20 +38,6 @@ color:#98FB98;
 </style>
 <form action="" method="post" novalidate>
     {{ form.hidden_tag() }}
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                <h1>Add task</h1>
-                <link href="/css/bootstrap.min.css" rel="stylesheet">
-                <script src="/jquery.min.js"></script>
-                <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
-                <script src="js/fileinput.min.js" type="text/javascript"></script>
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    <div class="form-group">
-                        <label>Приложите фотографию или аудио файл</label>
-                    <input id="file-demo" name= 'file' type="file" class="file" data-preview-file-type="any">
-                    </div>
-                    <form>
                     {% if text %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ text }}
@@ -59,6 +45,20 @@ color:#98FB98;
                     {% endif %}
                     </form>
                     <form method="post" novalidate>
+                        <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h1>Add task</h1>
+                                <link  href="/css/bootstrap.min.css" rel="stylesheet">
+                                <script src="/jquery.min.js"></script>
+                                <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+                                <script src="js/fileinput.min.js" type="text/javascript"></script>
+                                <form method="post" enctype="multipart/form-data" novalidate>
+                                    <div class="form-group">
+                                        <label>Приложите фотографию или аудио файл</label>
+                                    <input id="file-demo" name= 'file' type="file" class="file" data-preview-file-type="any">
+                                    </div>
+                                    <form>
                         <p>
                             {{ form.title.label }}<br>
                             {{ form.title }}<br>
@@ -92,10 +92,7 @@ color:#98FB98;
                         </div>
                         {% endfor %}
                         <p>{{ form.submit() }}</p>
-                    </form>
-                    </form>
-                </div>
-                <div class="col-lg-4">
+                        <div class="col-lg-4">
                 </div>
                 <div class="col-lg-4">
                     <div class="form-group form-check">
@@ -105,6 +102,9 @@ color:#98FB98;
                         <h4></h4>
                         {% endfor %}
                     </div>
+                </div>
+                    </form>
+                    </form>
                 </div>
             </div>
         </div>
