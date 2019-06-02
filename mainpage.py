@@ -96,16 +96,20 @@ def add_task(title):
         return redirect('/login')
     form = AddTaskForm()
     title2 = True
-    if not title.isalpha():
+    s = "\'\'"
+    flag = True
+    if title == s:
         title2 = False
-    if title2:
-        title1, content, choices, correct_choice = tasks_model.get(title)[1:-1]
-        id = tasks_model.get(title)[0]
-        form.title.data = title1
-        form.sentence.data = content
-        form.choice.data = choices
-        form.correct.data = correct_choice
+    if request.method == 'GET':
+        if title2 and flag:
+            title1, content, choices, correct_choice = tasks_model.get(title)[1:-1]
+            form.title.data = title1
+            form.sentence.data = content
+            form.choice.data = choices
+            form.correct.data = correct_choice
     if request.method == 'POST':
+        flag = False
+        id = tasks_model.get(title)[0]
         title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
@@ -121,14 +125,12 @@ def add_task(title):
             print(request.form)
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    '''
                     if request.form.get('file'):
                         file_input = open(request['file'], "rb")
                         file = file_input.read()
                         file_input.close()
                         binary = sqlite3.Binary(file)
                         files_base.insert(binary, ind)
-                        '''
                     if not title2:
                         tasks_model.insert(title1, sentence, choice, correct, i)
                         ind = tasks_model.index()
