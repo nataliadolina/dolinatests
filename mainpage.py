@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import Flask, render_template, request, session
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
@@ -19,6 +17,9 @@ files_base = Files(base)
 files_base.init_table()
 progress = ProgressModel(base)
 progress.init_table()
+tasks_model = TasksModel(base)
+tasks_model.init_table()
+all_users = users_base.get_all()
 
 
 class LoginForm(FlaskForm):
@@ -86,11 +87,6 @@ def tasks():
         return redirect('/login')
 
 
-tasks_model = TasksModel(base)
-tasks_model.init_table()
-all_users = users_base.get_all()
-
-
 @app.route('/add_task/<int:title>', methods=['GET', 'POST'])
 def add_task(title):
     if 'username' not in session:
@@ -120,7 +116,7 @@ def add_task(title):
         else:
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    if not title:
+                    if not title or title and i != session['user_id']:
                         tasks_model.insert(title1, sentence, choice, correct, i)
                     else:
                         tasks_model.update(title1, sentence, choice, correct, id)
@@ -203,14 +199,13 @@ def task(id):
     answers = ''
     correctness = ''
     task_id = session['task_id'][id]
+    correct = progress.get_all(task_id)
     try:
-        correct = progress.get_all(task_id)
         c = correct[0][-2].split()
         answer = correct[0][1].split()
         prog = progress.get_all()
         ides = [i[-1] for i in prog]
-    except sqlite3.OperationalError:
-        correct = []
+    except IndexError:
         answer = []
         c = []
         ides = []

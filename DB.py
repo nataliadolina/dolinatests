@@ -184,7 +184,7 @@ class ProgressModel:
     def init_table(self):
         cursor = self.connection.cursor()
         # cursor.execute('DROP TABLE IF EXISTS progress')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS files
+        cursor.execute('''CREATE TABLE IF NOT EXISTS progress
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         answers VARCHAR(10000),
                                         correct VARCHAR(10000),
