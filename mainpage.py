@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, session
-from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired
 from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files
+from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -20,27 +18,6 @@ progress.init_table()
 tasks_model = TasksModel(base)
 tasks_model.init_table()
 all_users = users_base.get_all()
-
-
-class LoginForm(FlaskForm):
-    username = StringField('Login', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Enter')
-
-
-class RegistrateForm(FlaskForm):
-    username = StringField('Login', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    repeatpassword = PasswordField('Repeat password', validators=[DataRequired()])
-    submit = SubmitField('Done')
-
-
-class AddTaskForm(FlaskForm):
-    title = StringField('title', validators=[DataRequired()])
-    sentence = TextAreaField('sentences', validators=[DataRequired()])
-    choice = TextAreaField('answer choice', validators=[DataRequired()])
-    correct = TextAreaField('correct answer', validators=[DataRequired()])
-    submit = SubmitField('Add')
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -116,11 +93,12 @@ def add_task(title):
         else:
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    if not title or title and i != session['user_id']:
+                    if title and i == session['user_id']:
+                        tasks_model.update(title1, sentence, choice, correct, i)
+                    elif not title:
                         tasks_model.insert(title1, sentence, choice, correct, i)
-                    else:
-                        tasks_model.update(title1, sentence, choice, correct, id)
-                        print(tasks_model.get_all())
+                    elif title not in [i[0] for i in tasks_model.get_all(i)]:
+                        tasks_model.insert(title1, sentence, choice, correct, i)
                     '''
                     if request.form.get('file'):
                         file_input = open(request['file'], "rb")
