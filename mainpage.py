@@ -10,13 +10,6 @@ from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-
-class LoginForm(FlaskForm):
-    username = StringField('Login', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Enter')
-
-
 base = DB()
 users_base = UsersModel(base)
 users_base.init_table()
@@ -24,6 +17,14 @@ scores = ScoresModel(base)
 scores.init_table()
 files_base = Files(base)
 files_base.init_table()
+progress = ProgressModel(base)
+progress.init_table()
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Login', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Enter')
 
 
 class RegistrateForm(FlaskForm):
@@ -90,26 +91,21 @@ tasks_model.init_table()
 all_users = users_base.get_all()
 
 
-@app.route('/add_task/<string:title>', methods=['GET', 'POST'])
+@app.route('/add_task/<int:title>', methods=['GET', 'POST'])
 def add_task(title):
     if 'username' not in session:
         return redirect('/login')
     form = AddTaskForm()
-    title2 = True
-    s = "\'\'"
-    flag = True
-    if title == s:
-        title2 = False
     if request.method == 'GET':
-        if title2 and flag:
+        if title != 0:
             title1, content, choices, correct_choice = tasks_model.get(title)[1:-1]
             form.title.data = title1
             form.sentence.data = content
             form.choice.data = choices
             form.correct.data = correct_choice
-    if request.method == 'POST':
-        flag = False
-        id = tasks_model.get(title)[0]
+    elif request.method == 'POST':
+        if title != 0:
+            id = tasks_model.get(title)[0]
         title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
@@ -118,24 +114,25 @@ def add_task(title):
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='invalid task. Number of strings in labels "sentences",'
                                         ' "answer choice", "correct answer" must be the same')
-        if not title2 and title1 in [i[1] for i in tasks_model.get_all()]:
+        if not title and title1 in [i[1] for i in tasks_model.get_all()]:
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='task with such title already exists')
         else:
-            print(request.form)
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
+                    if not title:
+                        tasks_model.insert(title1, sentence, choice, correct, i)
+                    else:
+                        tasks_model.update(title1, sentence, choice, correct, id)
+                        print(tasks_model.get_all())
+                    '''
                     if request.form.get('file'):
                         file_input = open(request['file'], "rb")
                         file = file_input.read()
                         file_input.close()
                         binary = sqlite3.Binary(file)
                         files_base.insert(binary, ind)
-                    if not title2:
-                        tasks_model.insert(title1, sentence, choice, correct, i)
-                        ind = tasks_model.index()
-                    else:
-                        tasks_model.update(title1, sentence, choice, correct, id)
+                    '''
             return redirect("/homepage")
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
@@ -196,10 +193,6 @@ def delete_tasks(id):
     return redirect('/all_tasks/{}'.format(session['user_id']))
 
 
-progress = ProgressModel(base)
-progress.init_table()
-
-
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
 def task(id):
     if 'username' not in session:
@@ -210,13 +203,17 @@ def task(id):
     answers = ''
     correctness = ''
     task_id = session['task_id'][id]
-    correct = progress.get_all(task_id)
-    if correct:
+    try:
+        correct = progress.get_all(task_id)
         c = correct[0][-2].split()
         answer = correct[0][1].split()
-    else:
-        c = []
+        prog = progress.get_all()
+        ides = [i[-1] for i in prog]
+    except sqlite3.OperationalError:
+        correct = []
         answer = []
+        c = []
+        ides = []
     if request.method == 'POST':
         session['scores'] = []
         ans1 = ''
@@ -233,7 +230,7 @@ def task(id):
                 else:
                     correctness += ' ' + 'false'
             answers += " " + ans
-        if task_id in [i[-1] for i in progress.get_all()]:
+        if task_id in ides:
             progress.update(answers, correctness, task_id)
         else:
             progress.insert(answers, correctness, task_id)
@@ -244,8 +241,6 @@ def task(id):
         correct = progress.get_all(task_id)
         if correct:
             c = correct[0][-2].split()
-        else:
-            c = []
         if len(correct[0]) >= 2:
             answer = correct[0][1].split()
         else:

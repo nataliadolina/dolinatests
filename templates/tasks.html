@@ -14,7 +14,7 @@
             <p class="card-text">{{session['scores'][i]}}</p>
             {% if session['user_id'] == 1 or session['user_id'] == 2 %}
             <a href="/delete/{{session['task_id'][i]}}" class="btn btn-light">Delete</a>
-            <a href="/add_task/{{session['titles'][i]}}" class="btn btn-light">Change</a>
+            <a href="/add_task/{{session['task_id'][i]}}" class="btn btn-light">Change</a>
             {% endif %}
             <a href="/task/{{i}}" class="btn btn-light">Start</a>
         </div>

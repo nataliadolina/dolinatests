@@ -70,6 +70,7 @@ class TasksModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS tasks')
         cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      title VARCHAR(100),
@@ -105,9 +106,9 @@ class TasksModel:
         cursor.close()
         self.connection.commit()
 
-    def get(self, title):
+    def get(self, id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tasks WHERE title = ?", (title,))
+        cursor.execute("SELECT * FROM tasks WHERE id = ?", (id,))
         row = cursor.fetchone()
         return row
 
@@ -231,7 +232,7 @@ class Files:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS progress')
+        # cursor.execute('DROP TABLE IF EXISTS files')
         cursor.execute('''CREATE TABLE IF NOT EXISTS files
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      file BLOB,
