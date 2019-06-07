@@ -55,11 +55,19 @@ def login():
     return render_template('login.html', title='Authorization', text='', form=form)
 
 
+@app.route('/homepage1', methods=['GET', 'POST'])
+def popp():
+    session.pop('list_id')
+    return redirect('/homepage')
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
     if 'username' in session:
-        return redirect('/all_tasks/0')
+        if 'list_id' not in session:
+            session['list_id'] = 0
+        return redirect('/all_tasks/{}'.format(session['list_id']))
     else:
         return redirect('/login')
 
@@ -93,7 +101,7 @@ def add_task(title):
         else:
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
-                    if title and i == session['user_id']:
+                    if title and i == session['list_id']:
                         tasks_model.update(title1, sentence, choice, correct, i)
                     elif not title:
                         tasks_model.insert(title1, sentence, choice, correct, i)
@@ -119,10 +127,12 @@ def all_tasks(id):
     if id != 0 and session['user_id'] in [1, 2]:
         all = tasks_model.get_all(id)
         username = users_base.get(id)[1]
+        session['list_id'] = id
     else:
         id = 0
     if id == 0:
         all = tasks_model.get_all(session['user_id'])
+        session['list_id'] = session['user_id']
         username = ''
     titles = [x[1] for x in all]
     n = range(len(titles))
@@ -164,7 +174,7 @@ def delete_tasks(id):
     tasks_model.delete(id)
     scores.delete(id)
     progress.delete(id)
-    return redirect('/all_tasks/{}'.format(session['user_id']))
+    return redirect('/all_tasks/{}'.format(session['list_id']))
 
 
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
