@@ -1,6 +1,8 @@
+import sqlite3
+
 from flask import Flask, render_template, request, session
 from werkzeug.utils import redirect
-from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files
+from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 
 app = Flask(__name__)
@@ -18,6 +20,8 @@ progress.init_table()
 tasks_model = TasksModel(base)
 tasks_model.init_table()
 all_users = users_base.get_all()
+task_user = TaskUser(base)
+task_user.init_table()
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -85,8 +89,6 @@ def add_task(title):
             form.choice.data = choices
             form.correct.data = correct_choice
     elif request.method == 'POST':
-        if title != 0:
-            id = tasks_model.get(title)[0]
         title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
@@ -102,19 +104,24 @@ def add_task(title):
             for i in [j[0] for j in all_users]:
                 if request.form.get(str(i)):
                     if title and i == session['list_id']:
-                        tasks_model.update(title1, sentence, choice, correct, i)
+                        tasks_model.update(title1, sentence, choice, correct, title)
+                        task_user.insert(title, i)
                     elif not title:
-                        tasks_model.insert(title1, sentence, choice, correct, i)
-                    elif title not in [i[0] for i in tasks_model.get_all(i)]:
-                        tasks_model.insert(title1, sentence, choice, correct, i)
-                    '''
+                        tasks_model.insert(title1, sentence, choice, correct)
+                        task_user.insert(tasks_model.index(), i)
+                    elif title not in [i[0] for i in task_user.get_all(i)]:
+                        tasks_model.insert(title1, sentence, choice, correct)
+                    else:
+                        tasks_model.update(title1, sentence, choice, correct, title)
+                        task_user.insert(title, i)
+                        '''
                     if request.form.get('file'):
-                        file_input = open(request['file'], "rb")
+                        file_input = request.files['file']
                         file = file_input.read()
                         file_input.close()
                         binary = sqlite3.Binary(file)
-                        files_base.insert(binary, ind)
-                    '''
+                        files_base.insert(binary, i)
+                        '''
             return redirect("/homepage")
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
@@ -125,46 +132,39 @@ def all_tasks(id):
     if 'username' not in session:
         return redirect('/login')
     if id != 0 and session['user_id'] in [1, 2]:
-        all = tasks_model.get_all(id)
+        all = [i[1] for i in task_user.get_all(id)]
         username = users_base.get(id)[1]
         session['list_id'] = id
     else:
         id = 0
     if id == 0:
-        all = tasks_model.get_all(session['user_id'])
+        all = [i[1] for i in task_user.get_all(id)]
         session['list_id'] = session['user_id']
         username = ''
-    titles = [x[1] for x in all]
-    n = range(len(titles))
-    ides_tasks = [x[0] for x in all]
-    session['task_id'] = ides_tasks
-    session['titles'] = titles
-    contents = [i.split('\n') for i in [x[2] for x in all]]
-    session['contents'] = contents
-    choices = [i.split('\n') for i in [x[3] for x in all]]
-    choices1 = []
-    arr = []
-    for i in choices:
-        for j in i:
-            arr.append(j.split())
-        choices1.append(arr)
-        arr = []
-    session['choices'] = choices1
-    correct_choices = [x[4].split('\n') for x in all]
-    session['correct'] = correct_choices
+    session['titles'] = []
+    session['contents'] = []
+    session['choices'] = []
+    session['correct'] = []
+    for i in all:
+        title, content, choices, correct_choices = tasks_model.get(i)[1:]
+        session['titles'].append(title)
+        session['contents'].append(content.split('\n'))
+        choices = [i.split() for i in choices.split('\n')]
+        session['choices'].append(choices)
+        session['correct'].append(correct_choices.split('\n'))
     sc = scores.get_all()
     scores_id = [i[-1] for i in sc]
     scores1 = []
-    for i in ides_tasks:
+    for i in all:
         if i in scores_id:
             n_correct = sc[scores_id.index(i)][-2]
             n_all = sc[scores_id.index(i)][-3]
         else:
             n_correct = 0
-            n_all = len(session['contents'][ides_tasks.index(i)])
+            n_all = len(session['contents'][all.index(i)])
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
-    return render_template('tasks.html', flag=True, n=n, name=username)
+    return render_template('tasks.html', flag=True, n=range(len(all)), name=username)
 
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])

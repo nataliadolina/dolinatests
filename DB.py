@@ -70,14 +70,13 @@ class TasksModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS tasks')
+        #cursor.execute('DROP TABLE IF EXISTS tasks')
         cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      title VARCHAR(100),
                                      content VARCHAR(10000),
                                      choices VARCHAR(1000),
-                                     correct_choice VARCHAR(100),
-                                     user_id INTEGER 
+                                     correct_choice VARCHAR(100)
                              )''')
         cursor.close()
         self.connection.commit()
@@ -91,11 +90,11 @@ class TasksModel:
         rows = cursor.fetchall()
         return rows[-1][0]
 
-    def insert(self, title, content, choices, correct, user_id):
+    def insert(self, title, content, choices, correct):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO tasks
-                          (title, content, choices, correct_choice, user_id) 
-                          VALUES (?,?,?,?,?)''', (title, content, choices, correct, user_id,))
+                          (title, content, choices, correct_choice) 
+                          VALUES (?,?,?,?)''', (title, content, choices, correct))
         cursor.close()
         self.connection.commit()
 
@@ -112,12 +111,9 @@ class TasksModel:
         row = cursor.fetchone()
         return row
 
-    def get_all(self, user_id=None):
+    def get_all(self):
         cursor = self.connection.cursor()
-        if user_id:
-            cursor.execute("SELECT * FROM tasks WHERE user_id = ?", (str(user_id),))
-        else:
-            cursor.execute("SELECT * FROM tasks")
+        cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
         return rows
 
@@ -270,5 +266,44 @@ class Files:
     def delete(self, task_id):
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM files WHERE task_id = ?''', (str(task_id),))
+        cursor.close()
+        self.connection.commit()
+
+
+class TaskUser:
+    def __init__(self, connection):
+        self.connection = connection.get_connection()
+
+    def init_table(self):
+        cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS taskuser')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS taskuser
+                                       (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        task_id INTEGER,
+                                        user_id INTEGER
+                                        )''')
+        cursor.close()
+        self.connection.commit()
+
+    def insert(self, task_id, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''INSERT INTO taskuser
+                          (task_id, user_id)
+                          VALUES (?,?)''', (str(task_id), str(user_id)))
+        cursor.close()
+        self.connection.commit()
+
+    def get_all(self, id=None):
+        cursor = self.connection.cursor()
+        if id:
+            cursor.execute("SELECT * FROM taskuser WHERE user_id = ?", (str(id),))
+        else:
+            cursor.execute("SELECT * FROM taskuser")
+        rows = cursor.fetchall()
+        return rows
+
+    def delete(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM tasksuser WHERE id = ?''', (str(id),))
         cursor.close()
         self.connection.commit()
