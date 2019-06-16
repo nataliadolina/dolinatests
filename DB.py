@@ -203,12 +203,12 @@ class ProgressModel:
         cursor.close()
         self.connection.commit()
 
-    def get_all(self, task_id=None, user_id=None):
+    def get_all(self, user_id, task_id=None):
         cursor = self.connection.cursor()
         if task_id:
             cursor.execute("SELECT * FROM progress WHERE task_id=? AND user_id=?", (str(task_id), str(user_id)))
         else:
-            cursor.execute("SELECT * FROM progress")
+            cursor.execute("SELECT * FROM progress WHERE user_id=?", (str(user_id,)))
         rows = cursor.fetchall()
         return rows
 

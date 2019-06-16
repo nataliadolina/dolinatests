@@ -205,8 +205,8 @@ def task(id):
     try:
         c = correct[0][-3].split()
         answer = correct[0][1].split()
-        prog = progress.get_all()
-        ides = [i[-1] for i in prog]
+        prog = progress.get_all(session['list_id'])
+        ides = [i[-2] for i in prog]
     except IndexError:
         answer = []
         c = []
@@ -229,12 +229,10 @@ def task(id):
             answers += " " + ans
         if task_id in ides:
             progress.update(answers, correctness, task_id, session['list_id'])
+            scores.update(session['task_id'][id], k, session['list_id'])
         else:
             progress.insert(answers, correctness, task_id, session['list_id'])
-        if task_id not in [i[-1] for i in scores.get_all()]:
             scores.insert(l, k, task_id, session['list_id'])
-        else:
-            scores.update(session['task_id'][id], k, session['list_id'])
         correct = progress.get_all(task_id, session['list_id'])
         if correct:
             c = correct[0][-3].split()
