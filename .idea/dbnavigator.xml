@@ -25,7 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="0e844583-1368-46ca-83a3-28036539e2c8">
-        <schema name="main" object-types="index, dataset trigger, constraint, view, column, table" />
+        <schema name="main" object-types="table, index, dataset trigger, view, constraint, column" />
       </connection>
     </loaded-nodes>
   </component>
@@ -42,11 +42,10 @@
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
+      <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/users" />
       <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/progress" />
       <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/tasks" />
-      <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/users" />
-      <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/taskuser" />
-      <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/scores" />
+      <object connection-id="0e844583-1368-46ca-83a3-28036539e2c8" object-ref="schemas/main/tables/progresss" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
@@ -58,6 +57,7 @@
     <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.users" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.tasks" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.progress" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.progresss" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.taskuser" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="0e844583-1368-46ca-83a3-28036539e2c8" dataset="main.scores" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="b43c1f61-d114-480a-ad99-84799004c104" dataset="main.tasks" active-filter-id="EMPTY_FILTER" />

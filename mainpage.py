@@ -2,7 +2,7 @@ import sqlite3
 
 from flask import Flask, render_template, request, session
 from werkzeug.utils import redirect
-from DB import DB, UsersModel, TasksModel, ScoresModel, ProgressModel, Files, TaskUser
+from DB import DB, UsersModel, TasksModel, ScoresModel, ProgresssModel, Files, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 
 app = Flask(__name__)
@@ -15,7 +15,7 @@ scores = ScoresModel(base)
 scores.init_table()
 files_base = Files(base)
 files_base.init_table()
-progress = ProgressModel(base)
+progress = ProgresssModel(base)
 progress.init_table()
 tasks_model = TasksModel(base)
 tasks_model.init_table()
@@ -83,7 +83,7 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
-            title1, content, choices, correct_choice = tasks_model.get(title)[1:-1]
+            title1, content, choices, correct_choice = tasks_model.get(title)[1:]
             form.title.data = title1
             form.sentence.data = content
             form.choice.data = choices
@@ -105,7 +105,6 @@ def add_task(title):
                 if request.form.get(str(i)):
                     if title and i == session['list_id']:
                         tasks_model.update(title1, sentence, choice, correct, title)
-                        task_user.insert(title, i)
                     elif not title:
                         if len(tasks_model.get_all()):
                             if title1 != tasks_model.get_all()[-1][1]:
@@ -113,7 +112,7 @@ def add_task(title):
                         else:
                             tasks_model.insert(title1, sentence, choice, correct)
                         task_user.insert(tasks_model.index(), i)
-                    elif title not in [i[0] for i in task_user.get_all(i)]:
+                    elif title not in [i[1] for i in task_user.get_all(i)]:
                         tasks_model.insert(title1, sentence, choice, correct)
                     else:
                         tasks_model.update(title1, sentence, choice, correct, title)
@@ -160,7 +159,7 @@ def all_tasks(id):
             session['correct'].append(correct_choices.split('\n'))
         except Exception as e:
             all.pop(all.index(i))
-    sc = scores.get_all(session['list_id'])
+    sc = progress.get_all(session['list_id'])
     scores_id = [i[-2] for i in sc]
     scores1 = []
     n_all = 0
@@ -185,8 +184,7 @@ def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
     tasks_model.delete(id)
-    scores.delete(id)
-    progress.delete(id)
+    progress.delete(id, session['list_id'])
     task_user.delete(id, session['list_id'])
     return redirect('/all_tasks/{}'.format(session['list_id']))
 
@@ -195,18 +193,19 @@ def delete_tasks(id):
 def task(id):
     if 'username' not in session:
         return redirect('/login')
-    k = 0
+    num_correct = 0
     l = len(session['contents'][id])
     length = list(range(l))
     answers = ''
     correctness = ''
     task_id = session['task_id'][id]
-    correct = progress.get_all(task_id, session['list_id'])
+    correct = progress.get_all(session['list_id'], task_id)
     try:
         c = correct[0][-3].split()
-        answer = correct[0][1].split()
-        prog = progress.get_all()
-        ides = [i[-1] for i in prog]
+        answer = correct[0][3].split()
+        prog = progress.get_all(session['list_id'], task_id)
+        ides = [i[-2] for i in prog]
+        print(prog)
     except IndexError:
         answer = []
         c = []
@@ -222,24 +221,21 @@ def task(id):
                 correctness += ' ' + 'false'
             finally:
                 if ans == ans1:
-                    k += 1
+                    num_correct += 1
                     correctness += ' ' + 'true'
                 else:
                     correctness += ' ' + 'false'
             answers += " " + ans
         if task_id in ides:
-            progress.update(answers, correctness, task_id, session['list_id'])
+            progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
         else:
-            progress.insert(answers, correctness, task_id, session['list_id'])
-        if task_id not in [i[-1] for i in scores.get_all()]:
-            scores.insert(l, k, task_id, session['list_id'])
-        else:
-            scores.update(session['task_id'][id], k, session['list_id'])
-        correct = progress.get_all(task_id, session['list_id'])
+            progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
+        correct = progress.get_all(session['list_id'], task_id)
+        print(progress.get_all())
         if correct:
             c = correct[0][-3].split()
-        if len(correct[0]) >= 2:
-            answer = correct[0][1].split()
+            if len(correct[0]) >= 2:
+                answer = correct[0][3].split()
         else:
             answer = []
     return render_template('task.html', i=id, length=length, correct=c, answer=answer, choices=session['choices'][id])
