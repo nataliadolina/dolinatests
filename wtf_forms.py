@@ -21,4 +21,4 @@ class AddTaskForm(FlaskForm):
     sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice', validators=[DataRequired()])
     correct = TextAreaField('correct answer', validators=[DataRequired()])
-    submit = SubmitField('Add')
+    hints = TextAreaField('hints', validators=[DataRequired()])

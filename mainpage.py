@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import Flask, render_template, request, session
 from werkzeug.utils import redirect
 from DB import DB, UsersModel, TasksModel, ScoresModel, ProgresssModel, Files, TaskUser
@@ -83,7 +81,7 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
-            title1, content, choices, correct_choice = tasks_model.get(title)[1:]
+            title1, content, choices, correct_choice = tasks_model.get(title)[2:]
             form.title.data = title1
             form.sentence.data = content
             form.choice.data = choices
@@ -101,30 +99,35 @@ def add_task(title):
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='task with such title already exists')
         else:
-            for i in [j[0] for j in all_users]:
+            not_title_index, title_index = title, title
+            if not title:
+                tasks_model.insert(title1, sentence, choice, correct)
+                not_title_index = tasks_model.index()
+            ides = [j[0] for j in all_users]
+            checked = []
+            flag = False
+            f = request.files('file')
+            if f:
+                with open('static/' + f, 'w') as rf:
+                    rf.write(f.read().decode('utf-8'))
+            for i in ides:
                 if request.form.get(str(i)):
-                    if title and i == session['list_id']:
-                        tasks_model.update(title1, sentence, choice, correct, title)
-                    elif not title:
-                        if len(tasks_model.get_all()):
-                            if title1 != tasks_model.get_all()[-1][1]:
-                                tasks_model.insert(title1, sentence, choice, correct)
-                        else:
-                            tasks_model.insert(title1, sentence, choice, correct)
-                        task_user.insert(tasks_model.index(), i)
-                    elif title not in [i[1] for i in task_user.get_all(i)]:
-                        tasks_model.insert(title1, sentence, choice, correct)
-                    else:
-                        tasks_model.update(title1, sentence, choice, correct, title)
-                        task_user.insert(title, i)
-                        '''
-                    if request.form.get('file'):
-                        file_input = request.files['file']
-                        file = file_input.read()
-                        file_input.close()
-                        binary = sqlite3.Binary(file)
-                        files_base.insert(binary, i)
-                        '''
+                    checked.append(i)
+            else:
+                if session['list_id'] not in checked:
+                    tasks_model.insert(title1, sentence, choice, correct)
+                    title_index = tasks_model.index()
+                    flag = True
+                else:
+                    tasks_model.update(title1, sentence, choice, correct, title)
+            for i in checked:
+                if not title:
+                    task_user.insert(not_title_index, i)
+                else:
+                    if flag and title_index not in [i[1] for i in task_user.get_all(i)]:
+                        task_user.insert(title_index, i)
+                    elif not flag and not_title_index not in [i[1] for i in task_user.get_all(i)]:
+                        task_user.insert(not_title_index, i)
             return redirect("/homepage")
     return render_template('add_task.html', form=form, username=session['username'], users=all_users)
 
@@ -149,14 +152,17 @@ def all_tasks(id):
     session['choices'] = []
     session['correct'] = []
     session['task_id'] = all
+    session['hints'] = []
     for i in all:
         try:
-            title, content, choices, correct_choices = tasks_model.get(i)[1:]
+            hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
             session['titles'].append(title)
             session['contents'].append(content.split('\n'))
             choices = [i.split() for i in choices.split('\n')]
             session['choices'].append(choices)
             session['correct'].append(correct_choices.split('\n'))
+            hints = [i.split() for i in hints.split('\n')]
+            session['hints'].append(hints)
         except Exception as e:
             all.pop(all.index(i))
     sc = progress.get_all(session['list_id'])
@@ -231,7 +237,6 @@ def task(id):
         else:
             progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
         correct = progress.get_all(session['list_id'], task_id)
-        print(progress.get_all())
         if correct:
             c = correct[0][-3].split()
             if len(correct[0]) >= 2:

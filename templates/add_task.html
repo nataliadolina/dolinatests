@@ -55,8 +55,10 @@ color:#98FB98;
                                 <script src="js/fileinput.min.js" type="text/javascript"></script>
                                 <form method="post" enctype="multipart/form-data" novalidate>
                                     <div class="form-group">
-                                        <label>Приложите фотографию или аудио файл</label>
-                                    <input id="file-demo" name= 'file' type="file" class="file" data-preview-file-type="any">
+                                    <form method="post" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                        <label for="photo">Выберите файл</label>
+                                        <input type="file" class="form-control-file" id="photo" name="file">
                                     </div>
                                     <form>
                         <p>
@@ -94,6 +96,7 @@ color:#98FB98;
                         <p>{{ form.submit() }}</p>
                         <div class="col-lg-4">
                 </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
                 <div class="col-lg-4">
                     <div class="form-group form-check">
                         {% for i in users %}
@@ -105,8 +108,10 @@ color:#98FB98;
                 </div>
                     </form>
                     </form>
+                    </form>
+
                 </div>
             </div>
         </div>
     </form>
-{% endblock %}
+ock %}{% endbl
