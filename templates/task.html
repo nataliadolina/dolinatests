@@ -36,7 +36,9 @@ select {
     <div class="container">
         <div class="row">
             {%if correct%}
-            {%if correct[j] == 'true'%}
+            {%if correct[j] == 'true' and j in hint_given%}
+            <span class="badge badge-danger">-</span><span class="badge badge-success">+</span><h5>{{session['contents'][i][j]}}</h5>
+            {%elif correct[j] == 'true' and j not in hint_given%}
             <span class="badge badge-success">+</span><h5>{{session['contents'][i][j]}}</h5>
             {% else %}
             <span class="badge badge-danger">-</span><h5>{{session['contents'][i][j]}}</h5>
@@ -46,6 +48,7 @@ select {
             {%endif%}
             <div class="col item">
                 <div class="col-2 item">
+                    {% if choices%}
                     <select class="dropdown" name={{j}}>
                         {%for element1 in choices[j]%}
                         {%if answer%}
@@ -59,9 +62,14 @@ select {
                         {%endif%}
                         {%endfor%}
                     </select>
-                    <h1> </h1>
+                    {%else%}
+                    <div class="form-group">
+                        <input class="form-control" name={{j}} value="{{answer[j]}}" id="answer">
+                      </div>
+                    </div>
                 </div>
-            </div>
+                    {%endif%}
+
         </div>
     </div>
     {%endfor%}

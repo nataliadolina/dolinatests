@@ -91,18 +91,18 @@ class TasksModel:
         rows = cursor.fetchall()
         return rows[-1][0]
 
-    def insert(self, title, content, choices, correct):
+    def insert(self, hints, title, content, choices, correct):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO task
-                          (title, content, choices, correct_choice) 
-                          VALUES (?,?,?,?)''', (title, content, choices, correct))
+                          (hints, title, content, choices, correct_choice) 
+                          VALUES (?,?,?,?,?)''', (hints, title, content, choices, correct))
         cursor.close()
         self.connection.commit()
 
-    def update(self, title, content, choices, correct, task_id):
+    def update(self, hints, title, content, choices, correct, task_id):
         cursor = self.connection.cursor()
-        cursor.execute('UPDATE task SET title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-                       (title, content, choices, correct, task_id,))
+        cursor.execute('UPDATE task SET hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
+                       (hints, title, content, choices, correct, str(task_id,)))
         cursor.close()
         self.connection.commit()
 
@@ -125,66 +125,16 @@ class TasksModel:
         self.connection.commit()
 
 
-class ScoresModel:
-    def __init__(self, connection):
-        self.connection = connection.get_connection()
-
-    def init_table(self):
-        cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS scores')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS scores
-                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     num_tasks INTEGER,
-                                     num_correct INTEGER,
-                                     task_id INTEGER,
-                                     user_id INTEGER
-                                     )''')
-        cursor.close()
-        self.connection.commit()
-
-    def get_connection(self):
-        return self.connection
-
-    def insert(self, num_tasks, num_correct, task_id, user_id):
-        cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO scores
-                          (num_tasks, num_correct, task_id, user_id)
-                          VALUES (?,?,?,?)''', (str(num_tasks), str(num_correct), str(task_id), str(user_id)))
-        cursor.close()
-        self.connection.commit()
-
-    def get_all(self, task_id=None, user_id=None):
-        cursor = self.connection.cursor()
-        if user_id:
-            cursor.execute("SELECT * FROM scores WHERE user_id=? AND task_id=?", (str(user_id), str(task_id)))
-        else:
-            cursor.execute("SELECT * FROM scores")
-        rows = cursor.fetchall()
-        return rows
-
-    def update(self, task_id, k, user_id):
-        cursor = self.connection.cursor()
-        cursor.execute('UPDATE scores SET num_correct=? WHERE task_id=? AND user_id=?',
-                       (str(k), str(task_id), str(user_id)))
-        cursor.close()
-        self.connection.commit()
-
-    def delete(self, task_id):
-        cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM scores WHERE task_id = ?''', (str(task_id),))
-        cursor.close()
-        self.connection.commit()
-
-
 class ProgresssModel:
     def __init__(self, connection):
         self.connection = connection.get_connection()
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS progresss')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS progresss
+        cursor.execute('DROP TABLE IF EXISTS progresss')
+        cursor.execute('''CREATE TABLE IF NOT EXISTS prog
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        hint_given VARCHAR(10000) DEFAULT NULL, 
                                         num_tasks INTEGER,
                                         num_correct INTEGER,
                                         answers VARCHAR(10000),
@@ -198,9 +148,16 @@ class ProgresssModel:
     def get_connection(self):
         return self.connection
 
+    def set_hint(self, task_id, user_id, hint_given):
+        cursor = self.connection.cursor()
+        cursor.execute('''UPDATE prog SET hint_given=? WHERE task_id=? and user_id=?''',
+                       (hint_given, str(task_id,), str(user_id)))
+        cursor.close()
+        self.connection.commit()
+
     def insert(self, num_tasks, num_correct, answers, correct, task_id, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO progresss
+        cursor.execute('''INSERT INTO prog
                           (num_tasks, num_correct, answers, correct, task_id, user_id)
                           VALUES (?,?,?,?,?,?)''',
                        (str(num_tasks), str(num_correct), str(answers), str(correct), str(task_id), str(user_id)))
@@ -210,25 +167,24 @@ class ProgresssModel:
     def get_all(self, user_id=None, task_id=None):
         cursor = self.connection.cursor()
         if user_id and not task_id:
-            cursor.execute("SELECT * FROM progresss WHERE user_id=?", (str(user_id),))
+            cursor.execute("SELECT * FROM prog WHERE user_id=?", (str(user_id),))
         elif user_id and task_id:
-            cursor.execute("SELECT * FROM progresss WHERE task_id=? AND user_id=?", (str(task_id), str(user_id)))
+            cursor.execute("SELECT * FROM prog WHERE task_id=? AND user_id=?", (str(task_id), str(user_id)))
         else:
-            cursor.execute("SELECT * FROM progresss")
+            cursor.execute("SELECT * FROM prog")
         rows = cursor.fetchall()
         return rows
 
     def update(self, num_tasks, num_correct, answer, correct, id, user_id):
         cursor = self.connection.cursor()
-        cursor.execute(
-            'UPDATE progresss SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
+        cursor.execute('UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
             (str(num_tasks), str(num_correct), answer, correct, str(id), str(user_id)))
         cursor.close()
         self.connection.commit()
 
     def delete(self, task_id, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM progresss WHERE task_id = ? AND user_id=?''', (str(task_id), str(user_id)))
+        cursor.execute('''DELETE FROM prog WHERE task_id = ? AND user_id=?''', (str(task_id), str(user_id)))
         cursor.close()
         self.connection.commit()
 

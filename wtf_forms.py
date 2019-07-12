@@ -19,6 +19,6 @@ class RegistrateForm(FlaskForm):
 class AddTaskForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     sentence = TextAreaField('sentences', validators=[DataRequired()])
-    choice = TextAreaField('answer choice', validators=[DataRequired()])
+    choice = TextAreaField('answer choice')
     correct = TextAreaField('correct answer', validators=[DataRequired()])
-    hints = TextAreaField('hints', validators=[DataRequired()])
+    hints = TextAreaField('hints')

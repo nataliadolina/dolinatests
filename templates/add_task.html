@@ -53,13 +53,12 @@ color:#98FB98;
                                 <script src="/jquery.min.js"></script>
                                 <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
                                 <script src="js/fileinput.min.js" type="text/javascript"></script>
-                                <form method="post" enctype="multipart/form-data" novalidate>
                                     <div class="form-group">
-                                    <form method="post" enctype="multipart/form-data">
                                         <div class="form-group">
                                         <label for="photo">Выберите файл</label>
                                         <input type="file" class="form-control-file" id="photo" name="file">
                                     </div>
+                                        </div>
                                     <form>
                         <p>
                             {{ form.title.label }}<br>
@@ -93,7 +92,14 @@ color:#98FB98;
                             {{ error }}
                         </div>
                         {% endfor %}
-                        <p>{{ form.submit() }}</p>
+                                        <p>
+                            {{ form.hints.label }}<br>
+                            {{ form.hints }}<br>
+                            {% for error in form.correct.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endfor %}
                         <div class="col-lg-4">
                 </div>
                 <button type="submit" class="btn btn-primary">Отправить</button>
@@ -107,11 +113,8 @@ color:#98FB98;
                     </div>
                 </div>
                     </form>
+                                </div>
+                            </div>
+                            </div>
                     </form>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </form>
-ock %}{% endbl
+{% endblock %}
