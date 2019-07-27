@@ -70,7 +70,7 @@ class TasksModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('DROP TABLE IF EXISTS tasks')
+        # cursor.execute('DROP TABLE IF EXISTS task')
         cursor.execute('''CREATE TABLE IF NOT EXISTS task
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      hints VARCHAR(10000) DEFAULT NULL,
@@ -131,7 +131,7 @@ class ProgresssModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('DROP TABLE IF EXISTS progress')
+        # cursor.execute('DROP TABLE IF EXISTS prog')
         cursor.execute('''CREATE TABLE IF NOT EXISTS prog
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         hint_given VARCHAR(10000) DEFAULT NULL,
@@ -196,7 +196,7 @@ class Files:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('DROP TABLE IF EXISTS files')
+        # cursor.execute('DROP TABLE IF EXISTS files')
         cursor.execute('''CREATE TABLE IF NOT EXISTS file
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                      file VARCHAR(10000) DEFAULT NULL,

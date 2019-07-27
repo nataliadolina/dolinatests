@@ -79,7 +79,6 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
-            print(tasks_model.get(title)[2:])
             title1, content, choices, correct_choice = tasks_model.get(title)[2:]
             form.title.data = title1
             form.sentence.data = content
@@ -194,7 +193,9 @@ def all_tasks(id):
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
     print(session['contents'])
-    return render_template('tasks.html', flag=True, n=range(len(all)), name=username)
+    n = list(range(0, len(all), 3))
+    print(n)
+    return render_template('tasks.html', flag=True, n=n, n_all=len(all), name=username)
 
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
@@ -219,21 +220,18 @@ def task(id):
     choices = []
     task_id = session['task_id'][id]
     correct = progress.get_all(session['list_id'], task_id)
-    hint_given = []
     c = []
     ides = []
     answer = []
+    hint_given = []
     if correct:
         answer = correct[0][4].split()
         c = correct[0][-3].split()
+        hint_given = list(map(int, correct[0][1].split()))
     if session['choices']:
         choices = session['choices'][id]
     if request.method == 'POST':
         try:
-            if correct[0][1].isdigit():
-                hint_given = list(map(int, correct[0][1].split()))
-            else:
-                hint_given = []
             ides = [i[-2] for i in correct]
         except IndexError:
             pass
