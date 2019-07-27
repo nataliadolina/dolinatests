@@ -79,6 +79,7 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
+            print(tasks_model.get(title)[2:])
             title1, content, choices, correct_choice = tasks_model.get(title)[2:]
             form.title.data = title1
             form.sentence.data = content
@@ -89,7 +90,7 @@ def add_task(title):
         sentence = form.sentence.data
         choice = form.choice.data
         correct = form.correct.data
-        hints = form.hints.data
+        hints = form.hints.data.strip()
         if (len(sentence.split('\n')) != len(choice.split('\n')) or len(correct.split('\n')) != len(
                 choice.split('\n'))) and choice != '':
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
@@ -171,8 +172,7 @@ def all_tasks(id):
             else:
                 session['choices'].append([])
             if hints:
-                hints = [i.split() for i in hints.split('\n')]
-                session['hints'].append(hints)
+                session['hints'].append(hints.split('\n'))
             else:
                 session['hints'].append([])
         except Exception as e:
@@ -219,53 +219,68 @@ def task(id):
     choices = []
     task_id = session['task_id'][id]
     correct = progress.get_all(session['list_id'], task_id)
+    hint_given = []
+    c = []
+    ides = []
+    answer = []
+    if correct:
+        answer = correct[0][4].split()
+        c = correct[0][-3].split()
     if session['choices']:
         choices = session['choices'][id]
-    try:
-        if correct[0][1]:
-            hint_given = list(map(int, correct[0][1].split()))
-        else:
-            hint_given = []
-        c = correct[0][-3].split()
-        answer = correct[0][4].split()
-        prog = progress.get_all(session['list_id'], task_id)
-        ides = [i[-2] for i in prog]
-        print(prog)
-    except IndexError:
-        answer = []
-        c = []
-        ides = []
-        hint_given = []
     if request.method == 'POST':
+        try:
+            if correct[0][1].isdigit():
+                hint_given = list(map(int, correct[0][1].split()))
+            else:
+                hint_given = []
+            ides = [i[-2] for i in correct]
+        except IndexError:
+            pass
         session['scores'] = []
         ans1 = ''
+        hints = session['hints'][id]
+        flag = False
+        hint = ''
         for i in length:
             ans = request.form[str(i)]
             try:
                 ans1 = session['correct'][id][i].strip()
             except Exception as e:
                 correctness += ' ' + 'false'
+                if not flag and hints:
+                    flag = True
+                    hint = hints[i]
             finally:
                 if ans == ans1:
                     num_correct += 1
                     correctness += ' ' + 'true'
                 else:
+                    if not flag and hints:
+                        flag = True
+                        hint = hints[i]
                     correctness += ' ' + 'false'
             answers += " " + ans
-        num_incor = correctness.split()
-        num_incor = [str(num_incor.index(i)) for i in num_incor if i == 'false']
+        corr = correctness.split()
+        num_incor = []
+        for i in range(len(corr)):
+            if corr[i].strip() == 'false':
+                num_incor.append(str(i))
         if task_id in ides:
             progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
         else:
             progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
             progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
         correct = progress.get_all(session['list_id'], task_id)
+        hint_given = list(map(int, correct[0][1].split()))
         if correct:
             c = correct[0][-3].split()
             if len(correct[0]) >= 2:
                 answer = correct[0][4].split()
         else:
             answer = []
+        if hint:
+            return redirect(hint.strip(), code=302)
     return render_template('task.html', i=id, hint_given=hint_given, length=length, correct=c, answer=answer,
                            choices=choices)
 

@@ -102,7 +102,7 @@ class TasksModel:
     def update(self, hints, title, content, choices, correct, task_id):
         cursor = self.connection.cursor()
         cursor.execute('UPDATE task SET hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-                       (hints, title, content, choices, correct, str(task_id,)))
+                       (hints, title, content, choices, correct, str(task_id, )))
         cursor.close()
         self.connection.commit()
 
@@ -131,10 +131,10 @@ class ProgresssModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        cursor.execute('DROP TABLE IF EXISTS progresss')
+        cursor.execute('DROP TABLE IF EXISTS progress')
         cursor.execute('''CREATE TABLE IF NOT EXISTS prog
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        hint_given VARCHAR(10000) DEFAULT NULL, 
+                                        hint_given VARCHAR(10000) DEFAULT NULL,
                                         num_tasks INTEGER,
                                         num_correct INTEGER,
                                         answers VARCHAR(10000),
@@ -151,7 +151,7 @@ class ProgresssModel:
     def set_hint(self, task_id, user_id, hint_given):
         cursor = self.connection.cursor()
         cursor.execute('''UPDATE prog SET hint_given=? WHERE task_id=? and user_id=?''',
-                       (hint_given, str(task_id,), str(user_id)))
+                       (hint_given, str(task_id, ), str(user_id)))
         cursor.close()
         self.connection.commit()
 
@@ -177,7 +177,8 @@ class ProgresssModel:
 
     def update(self, num_tasks, num_correct, answer, correct, id, user_id):
         cursor = self.connection.cursor()
-        cursor.execute('UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
+        cursor.execute(
+            'UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
             (str(num_tasks), str(num_correct), answer, correct, str(id), str(user_id)))
         cursor.close()
         self.connection.commit()
