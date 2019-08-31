@@ -103,7 +103,7 @@ class TasksModel:
     def update(self, links, hints, title, content, choices, correct, task_id):
         cursor = self.connection.cursor()
         cursor.execute('UPDATE tasks SET links=?, hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-                       (links, hints, title, content, choices, correct, str(task_id,)))
+                       (links, hints, title, content, choices, correct, str(task_id, )))
         cursor.close()
         self.connection.commit()
 
@@ -132,7 +132,7 @@ class ProgresssModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        #cursor.execute('DROP TABLE IF EXISTS prog')
+        # cursor.execute('DROP TABLE IF EXISTS prog')
         cursor.execute('''CREATE TABLE IF NOT EXISTS prog
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         hint_given VARCHAR(10000) DEFAULT NULL,
@@ -178,8 +178,7 @@ class ProgresssModel:
 
     def update(self, num_tasks, num_correct, answer, correct, id, user_id):
         cursor = self.connection.cursor()
-        cursor.execute(
-            'UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
+        cursor.execute('UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
             (str(num_tasks), str(num_correct), answer, correct, str(id), str(user_id)))
         cursor.close()
         self.connection.commit()
@@ -260,7 +259,7 @@ class TaskUser:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        #cursor.execute('DROP TABLE IF EXISTS taskuser')
+        # cursor.execute('DROP TABLE IF EXISTS taskuser')
         cursor.execute('''CREATE TABLE IF NOT EXISTS taskuser
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         task_id INTEGER,
