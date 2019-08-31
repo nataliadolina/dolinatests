@@ -4,7 +4,7 @@ import hashlib
 
 class DB:
     def __init__(self):
-        conn = sqlite3.connect('news.db', check_same_thread=False)
+        conn = sqlite3.connect('english.db', check_same_thread=False)
         self.conn = conn
 
     def get_connection(self):
@@ -71,8 +71,9 @@ class TasksModel:
     def init_table(self):
         cursor = self.connection.cursor()
         # cursor.execute('DROP TABLE IF EXISTS task')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS task
+        cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     links VARCHAR(10000) DEFAULT NULL,
                                      hints VARCHAR(10000) DEFAULT NULL,
                                      title VARCHAR(100),
                                      content VARCHAR(10000),
@@ -87,40 +88,40 @@ class TasksModel:
 
     def index(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM task")
+        cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
         return rows[-1][0]
 
-    def insert(self, hints, title, content, choices, correct):
+    def insert(self, links, hints, title, content, choices, correct):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO task
-                          (hints, title, content, choices, correct_choice) 
-                          VALUES (?,?,?,?,?)''', (hints, title, content, choices, correct))
+        cursor.execute('''INSERT INTO tasks
+                          (links, hints, title, content, choices, correct_choice) 
+                          VALUES (?,?,?,?,?,?)''', (links, hints, title, content, choices, correct))
         cursor.close()
         self.connection.commit()
 
-    def update(self, hints, title, content, choices, correct, task_id):
+    def update(self, links, hints, title, content, choices, correct, task_id):
         cursor = self.connection.cursor()
-        cursor.execute('UPDATE task SET hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-                       (hints, title, content, choices, correct, str(task_id, )))
+        cursor.execute('UPDATE tasks SET links=?, hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
+                       (links, hints, title, content, choices, correct, str(task_id,)))
         cursor.close()
         self.connection.commit()
 
     def get(self, id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM task WHERE id = ?", (id,))
+        cursor.execute("SELECT * FROM tasks WHERE id = ?", (id,))
         row = cursor.fetchone()
         return row
 
     def get_all(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM task")
+        cursor.execute("SELECT * FROM tasks")
         rows = cursor.fetchall()
         return rows
 
     def delete(self, news_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM task WHERE id = ?''', (str(news_id),))
+        cursor.execute('''DELETE FROM tasks WHERE id = ?''', (str(news_id),))
         cursor.close()
         self.connection.commit()
 
@@ -131,7 +132,7 @@ class ProgresssModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS prog')
+        #cursor.execute('DROP TABLE IF EXISTS prog')
         cursor.execute('''CREATE TABLE IF NOT EXISTS prog
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         hint_given VARCHAR(10000) DEFAULT NULL,
@@ -259,22 +260,22 @@ class TaskUser:
 
     def init_table(self):
         cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS taskuser')
+        #cursor.execute('DROP TABLE IF EXISTS taskuser')
         cursor.execute('''CREATE TABLE IF NOT EXISTS taskuser
                                        (id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         task_id INTEGER,
                                         user_id INTEGER
                                         )''')
-        cursor.close()
         self.connection.commit()
+        cursor.close()
 
     def insert(self, task_id, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''INSERT INTO taskuser
                           (task_id, user_id)
                           VALUES (?,?)''', (str(task_id), str(user_id)))
-        cursor.close()
         self.connection.commit()
+        cursor.close()
 
     def get_all(self, id=None):
         cursor = self.connection.cursor()
@@ -288,5 +289,5 @@ class TaskUser:
     def delete(self, id, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM taskuser WHERE task_id=? AND user_id=?''', (str(id), str(user_id)))
-        cursor.close()
         self.connection.commit()
+        cursor.close()

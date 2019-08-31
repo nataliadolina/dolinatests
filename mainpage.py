@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session
 from werkzeug.utils import redirect
 from DB import DB, UsersModel, TasksModel, ProgresssModel, Files, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
+import webbrowser
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -79,12 +80,15 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
-            title1, content, choices, correct_choice = tasks_model.get(title)[2:]
+            links, hints, title1, content, choices, correct_choice = tasks_model.get(title)[1:]
+            form.links.data = links
+            form.hints.data = hints
             form.title.data = title1
             form.sentence.data = content
             form.choice.data = choices
             form.correct.data = correct_choice
     elif request.method == 'POST':
+        links = form.links.data
         title1 = form.title.data
         sentence = form.sentence.data
         choice = form.choice.data
@@ -101,13 +105,12 @@ def add_task(title):
         else:
             not_title_index, title_index = title, title
             if not title:
-                tasks_model.insert(hints, title1, sentence, choice, correct)
+                tasks_model.insert(links, hints, title1, sentence, choice, correct)
                 not_title_index = tasks_model.index()
             ides = [j[0] for j in all_users]
             checked = []
             flag = False
             f = ''
-            '''
             try:
                 f = request.files('file')
             except Exception as e:
@@ -115,17 +118,16 @@ def add_task(title):
             else:
                 with open('static/' + f, 'w') as rf:
                     rf.write(f.read().decode('utf-8'))
-            '''
             for i in ides:
                 if request.form.get(str(i)):
                     checked.append(i)
             else:
                 if session['list_id'] not in checked:
-                    tasks_model.insert(hints, title1, sentence, choice, correct)
+                    tasks_model.insert(links, hints, title1, sentence, choice, correct)
                     title_index = tasks_model.index()
                     flag = True
                 else:
-                    tasks_model.update(hints, title1, sentence, choice, correct, title)
+                    tasks_model.update(links, hints, title1, sentence, choice, correct, title)
             for i in checked:
                 if not title:
                     task_user.insert(not_title_index, i)
@@ -159,9 +161,10 @@ def all_tasks(id):
     session['correct'] = []
     session['task_id'] = all
     session['hints'] = []
+    session['links'] = []
     for i in all:
         try:
-            hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
+            links, hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
             session['titles'].append(title)
             session['contents'].append(content.split('\n'))
             session['correct'].append(correct_choices.split('\n'))
@@ -174,6 +177,10 @@ def all_tasks(id):
                 session['hints'].append(hints.split('\n'))
             else:
                 session['hints'].append([])
+            if links:
+                session['links'].append(links.split('\n'))
+            else:
+                session['links'].append([])
         except Exception as e:
             all.pop(all.index(i))
     sc = progress.get_all(session['list_id'])
@@ -192,9 +199,7 @@ def all_tasks(id):
                 all.pop(all.index(i))
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
-    print(session['contents'])
     n = list(range(0, len(all), 3))
-    print(n)
     return render_template('tasks.html', flag=True, n=n, n_all=len(all), name=username)
 
 
@@ -224,6 +229,7 @@ def task(id):
     ides = []
     answer = []
     hint_given = []
+    links = session['links'][id]
     if correct:
         answer = correct[0][4].split()
         c = correct[0][-3].split()
@@ -278,9 +284,9 @@ def task(id):
         else:
             answer = []
         if hint:
-            return redirect(hint.strip(), code=302)
-    return render_template('task.html', i=id, hint_given=hint_given, length=length, correct=c, answer=answer,
-                           choices=choices)
+            webbrowser.open_new_tab(hint.strip())
+    return render_template('task.html', i=id, links=links, hint_given=hint_given, length=length, correct=c,
+                           answer=answer, choices=choices)
 
 
 @app.route('/all_users')

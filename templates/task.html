@@ -33,6 +33,14 @@ select {
 <h1> </h1>
 {%for j in length%}
 <form method="post">
+    {%for i in links%}
+    {%if 'https://www.youtube.com/' in i%}
+    <a href="{{i}}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" target="_blank">Click here to watch video</a>
+    {%else%}
+    <iframe src="{{i}}" width="500" height="400" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
+    {%endif%}
+    <h1> </h1>
+    {%endfor%}
     <div class="container">
         <div class="row">
             {%if correct%}

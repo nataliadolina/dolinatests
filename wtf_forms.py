@@ -22,3 +22,4 @@ class AddTaskForm(FlaskForm):
     choice = TextAreaField('answer choice')
     correct = TextAreaField('correct answer', validators=[DataRequired()])
     hints = TextAreaField('hints')
+    links = TextAreaField('Extra files')
