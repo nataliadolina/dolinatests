@@ -24,6 +24,7 @@ select {
 }
 
 </style>
+<form method="post">
 <div class="container">
   <div class="row">
     <div class="col-lg" style="width: 700px;margin: 7px;">
@@ -31,16 +32,15 @@ select {
     <h1> </h1>
 <h6>Select the correct word that is missing in the sentences below</h6>
 <h1> </h1>
-{%for j in length%}
-<form method="post">
     {%for i in links%}
     {%if 'https://www.youtube.com/' in i%}
     <a href="{{i}}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" target="_blank">Click here to watch video</a>
     {%else%}
-    <iframe src="{{i}}" width="500" height="400" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
+    <iframe src="{{i}}" width="500" height="200" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
     {%endif%}
     <h1> </h1>
     {%endfor%}
+    {%for j in length%}
     <div class="container">
         <div class="row">
             {%if correct%}
@@ -77,14 +77,23 @@ select {
                     </div>
                 </div>
                     {%endif%}
+            <h1></h1>
 
         </div>
     </div>
-    {%endfor%}
     <h1> </h1>
-    <button type="submit" class="btn btn-dark">Done</button>
+</div>
+</div>
+</div>
+{%endfor%}
+<div class="container">
+        <div class="row">
+            <div class="col item">
+                </div>
+                <div class="col-2 item">
+<button type="submit" class="btn btn-dark">Done</button>
+</div>
+</div>
+</div>
 </form>
-</div>
-</div>
-</div>
 {%endblock%}

@@ -71,8 +71,10 @@ class TasksModel:
     def init_table(self):
         cursor = self.connection.cursor()
         # cursor.execute('DROP TABLE IF EXISTS task')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS tasks
+        cursor.execute('''CREATE TABLE IF NOT EXISTS task
                                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                     text VARCHAR(10000) DEFAULT NULL,
+                                     picture VARCHAR(10000) DEFAULT NULL,
                                      links VARCHAR(10000) DEFAULT NULL,
                                      hints VARCHAR(10000) DEFAULT NULL,
                                      title VARCHAR(100),
@@ -88,40 +90,41 @@ class TasksModel:
 
     def index(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tasks")
+        cursor.execute("SELECT * FROM task")
         rows = cursor.fetchall()
         return rows[-1][0]
 
-    def insert(self, links, hints, title, content, choices, correct):
+    def insert(self, text, picture, links, hints, title, content, choices, correct):
         cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO tasks
-                          (links, hints, title, content, choices, correct_choice) 
-                          VALUES (?,?,?,?,?,?)''', (links, hints, title, content, choices, correct))
+        cursor.execute('''INSERT INTO task
+                          (text, picture, links, hints, title, content, choices, correct_choice) 
+                          VALUES (?,?,?,?,?,?,?,?)''', (text, picture, links, hints, title, content, choices, correct))
         cursor.close()
         self.connection.commit()
 
-    def update(self, links, hints, title, content, choices, correct, task_id):
+    def update(self, text, picture, links, hints, title, content, choices, correct, task_id):
         cursor = self.connection.cursor()
-        cursor.execute('UPDATE tasks SET links=?, hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-                       (links, hints, title, content, choices, correct, str(task_id, )))
+        cursor.execute('UPDATE task SET text=?, picture=?, links=?,'
+                       ' hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
+            (text, picture, links, hints, title, content, choices, correct, str(task_id, )))
         cursor.close()
         self.connection.commit()
 
     def get(self, id):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tasks WHERE id = ?", (id,))
+        cursor.execute("SELECT * FROM task WHERE id = ?", (id,))
         row = cursor.fetchone()
         return row
 
     def get_all(self):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT * FROM tasks")
+        cursor.execute("SELECT * FROM task")
         rows = cursor.fetchall()
         return rows
 
     def delete(self, news_id):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM tasks WHERE id = ?''', (str(news_id),))
+        cursor.execute('''DELETE FROM task WHERE id = ?''', (str(news_id),))
         cursor.close()
         self.connection.commit()
 
@@ -179,76 +182,13 @@ class ProgresssModel:
     def update(self, num_tasks, num_correct, answer, correct, id, user_id):
         cursor = self.connection.cursor()
         cursor.execute('UPDATE prog SET num_tasks=?, num_correct=?, answers=?, correct=? WHERE task_id=? AND user_id=?',
-            (str(num_tasks), str(num_correct), answer, correct, str(id), str(user_id)))
+                       (str(num_tasks), str(num_correct), answer, correct, str(id), str(user_id)))
         cursor.close()
         self.connection.commit()
 
     def delete(self, task_id, user_id):
         cursor = self.connection.cursor()
         cursor.execute('''DELETE FROM prog WHERE task_id = ? AND user_id=?''', (str(task_id), str(user_id)))
-        cursor.close()
-        self.connection.commit()
-
-
-class Files:
-    def __init__(self, connection):
-        self.connection = connection.get_connection()
-
-    def init_table(self):
-        cursor = self.connection.cursor()
-        # cursor.execute('DROP TABLE IF EXISTS files')
-        cursor.execute('''CREATE TABLE IF NOT EXISTS file
-                                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                     file VARCHAR(10000) DEFAULT NULL,
-                                     photo VARCHAR(10000) DEFAULT NULL,
-                                     task_id INTEGER
-                                     )''')
-        cursor.close()
-        self.connection.commit()
-
-    def get_connection(self):
-        return self.connection
-
-    def insert_file(self, file, task_id):
-        cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO file
-                          (file, task_id)
-                          VALUES (?,?)''', (file[0], str(task_id)))
-        cursor.close()
-        self.connection.commit()
-
-    def insert(self, file, photo, task_id):
-        cursor = self.connection.cursor()
-        cursor.execute('''INSERT INTO file
-                                          (file, photo, task_id)
-                                          VALUES (?,?,?)''', (file, photo, str(task_id)))
-        cursor.close()
-        self.connection.commit()
-
-    def get_all(self, task_id=None):
-        cursor = self.connection.cursor()
-        if task_id:
-            cursor.execute("SELECT * FROM file WHERE task_id = ?", (str(task_id),))
-        else:
-            cursor.execute("SELECT * FROM file")
-        rows = cursor.fetchall()
-        return rows
-
-    def update_file(self, file, id):
-        cursor = self.connection.cursor()
-        cursor.execute('UPDATE file SET file=? WHERE task_id = ?', (file, str(id),))
-        cursor.close()
-        self.connection.commit()
-
-    def update_photo(self, photo, task_id):
-        cursor = self.connection.cursor()
-        cursor.execute('UPDATE file SET photo=? WHERE task_id = ?', (photo, str(task_id),))
-        cursor.close()
-        self.connection.commit()
-
-    def delete(self, task_id):
-        cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM file WHERE task_id = ?''', (str(task_id),))
         cursor.close()
         self.connection.commit()
 

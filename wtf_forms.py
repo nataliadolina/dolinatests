@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FileField
 from wtforms.validators import DataRequired
 
 
@@ -18,6 +18,8 @@ class RegistrateForm(FlaskForm):
 
 class AddTaskForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
+    text = TextAreaField('Text of the task')
+    picture = FileField('Download an image')
     sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice')
     correct = TextAreaField('correct answer', validators=[DataRequired()])

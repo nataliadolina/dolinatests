@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, session
 from werkzeug.utils import redirect
-from DB import DB, UsersModel, TasksModel, ProgresssModel, Files, TaskUser
+from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 import webbrowser
 
@@ -10,8 +10,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 base = DB()
 users_base = UsersModel(base)
 users_base.init_table()
-files_base = Files(base)
-files_base.init_table()
 progress = ProgresssModel(base)
 progress.init_table()
 tasks_model = TasksModel(base)
@@ -80,7 +78,9 @@ def add_task(title):
     form = AddTaskForm()
     if request.method == 'GET':
         if title != 0:
-            links, hints, title1, content, choices, correct_choice = tasks_model.get(title)[1:]
+            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(title)[1:]
+            form.text.data = text
+            form.picture.data = picture
             form.links.data = links
             form.hints.data = hints
             form.title.data = title1
@@ -88,6 +88,8 @@ def add_task(title):
             form.choice.data = choices
             form.correct.data = correct_choice
     elif request.method == 'POST':
+        text = form.text.data
+        picture = form.picture.data
         links = form.links.data
         title1 = form.title.data
         sentence = form.sentence.data
@@ -105,7 +107,7 @@ def add_task(title):
         else:
             not_title_index, title_index = title, title
             if not title:
-                tasks_model.insert(links, hints, title1, sentence, choice, correct)
+                tasks_model.insert(text, picture, links, hints, title1, sentence, choice, correct)
                 not_title_index = tasks_model.index()
             ides = [j[0] for j in all_users]
             checked = []
@@ -123,11 +125,11 @@ def add_task(title):
                     checked.append(i)
             else:
                 if session['list_id'] not in checked:
-                    tasks_model.insert(links, hints, title1, sentence, choice, correct)
+                    tasks_model.insert(text, picture, links, hints, title1, sentence, choice, correct)
                     title_index = tasks_model.index()
                     flag = True
                 else:
-                    tasks_model.update(links, hints, title1, sentence, choice, correct, title)
+                    tasks_model.update(text, picture, links, hints, title1, sentence, choice, correct, title)
             for i in checked:
                 if not title:
                     task_user.insert(not_title_index, i)
@@ -155,6 +157,9 @@ def all_tasks(id):
         session['list_id'] = session['user_id']
         all = [i[1] for i in task_user.get_all(session['list_id'])]
         username = ''
+    print(tasks_model.get_all())
+    session['text'] = []
+    session['picture'] = []
     session['titles'] = []
     session['contents'] = []
     session['choices'] = []
@@ -162,9 +167,12 @@ def all_tasks(id):
     session['task_id'] = all
     session['hints'] = []
     session['links'] = []
+    all1 = set()
     for i in all:
         try:
-            links, hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
+            text, picture, links, hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
+            session['text'].append(text)
+            session['picture'].append(picture)
             session['titles'].append(title)
             session['contents'].append(content.split('\n'))
             session['correct'].append(correct_choices.split('\n'))
@@ -182,11 +190,13 @@ def all_tasks(id):
             else:
                 session['links'].append([])
         except Exception as e:
-            all.pop(all.index(i))
+            all1.add(i)
     sc = progress.get_all(session['list_id'])
     scores_id = [i[-2] for i in sc]
     scores1 = []
     n_all = 0
+    all = set(all)
+    all = list(all - all1)
     for i in all:
         if i in scores_id:
             n_correct = sc[scores_id.index(i)][3]
@@ -230,6 +240,7 @@ def task(id):
     answer = []
     hint_given = []
     links = session['links'][id]
+    picture = session['picture'][id]
     if correct:
         answer = correct[0][4].split()
         c = correct[0][-3].split()
