@@ -19,7 +19,7 @@ class RegistrateForm(FlaskForm):
 class AddTaskForm(FlaskForm):
     title = StringField('title', validators=[DataRequired()])
     text = TextAreaField('Text of the task')
-    picture = FileField('Download an image')
+    picture = FileField()
     sentence = TextAreaField('sentences', validators=[DataRequired()])
     choice = TextAreaField('answer choice')
     correct = TextAreaField('correct answer', validators=[DataRequired()])

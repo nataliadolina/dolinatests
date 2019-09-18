@@ -40,6 +40,7 @@ select {
     {%endif%}
     <h1> </h1>
     {%endfor%}
+    <img src="static/{{picture}}">
     {%for j in length%}
     <div class="container">
         <div class="row">
@@ -48,6 +49,8 @@ select {
             <span class="badge badge-danger">-</span><span class="badge badge-success">+</span><h5>{{session['contents'][i][j]}}</h5>
             {%elif correct[j] == 'true' and j not in hint_given%}
             <span class="badge badge-success">+</span><h5>{{session['contents'][i][j]}}</h5>
+            {% elif j>l_correct-1 %}
+            <h5>{{session['contents'][i][j]}}</h5>
             {% else %}
             <span class="badge badge-danger">-</span><h5>{{session['contents'][i][j]}}</h5>
             {%endif%}
@@ -73,19 +76,20 @@ select {
                     {%else%}
                     <div class="form-group">
                         <input class="form-control" name={{j}} value="{{answer[j]}}" id="answer">
-                      </div>
-                    </div>
+
                 </div>
+            </div>
+        </div>
                     {%endif%}
             <h1></h1>
-
         </div>
     </div>
     <h1> </h1>
 </div>
-</div>
-</div>
+      </div>
+                    </div>
 {%endfor%}
+
 <div class="container">
         <div class="row">
             <div class="col item">

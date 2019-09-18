@@ -1,5 +1,7 @@
+import os
+
 from flask import Flask, render_template, request, session
-from werkzeug.utils import redirect
+from werkzeug.utils import redirect, secure_filename
 from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 import webbrowser
@@ -90,6 +92,15 @@ def add_task(title):
     elif request.method == 'POST':
         text = form.text.data
         picture = form.picture.data
+        '''
+        if allowed_file(f.filename):
+            filename = secure_filename(f.filename)
+            save_path = "{}/{}".format(app.config["UPLOAD_FOLDER"], filename)
+            f.save(save_path)
+
+        with open('static/' + f, 'w') as rf:
+            rf.write(f.read().decode('utf-8'))
+        '''
         links = form.links.data
         title1 = form.title.data
         sentence = form.sentence.data
@@ -200,7 +211,7 @@ def all_tasks(id):
     for i in all:
         if i in scores_id:
             n_correct = sc[scores_id.index(i)][3]
-            n_all = sc[scores_id.index(i)][2]
+            n_all = len(session['contents'][all.index(i)])
         else:
             n_correct = 0
             try:
@@ -210,7 +221,7 @@ def all_tasks(id):
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
     n = list(range(0, len(all), 3))
-    return render_template('tasks.html', flag=True, n=n, n_all=len(all), name=username)
+    return render_template('tasks.html', flag=True, n=n, all=all, n_all=len(all), name=username)
 
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
@@ -235,6 +246,7 @@ def task(id):
     choices = []
     task_id = session['task_id'][id]
     correct = progress.get_all(session['list_id'], task_id)
+    print(correct)
     c = []
     ides = []
     answer = []
@@ -273,20 +285,28 @@ def task(id):
                 else:
                     if not flag and hints:
                         flag = True
-                        hint = hints[i]
+                        if len(hints) >= i + 1:
+                            hint = hints[i]
                     correctness += ' ' + 'false'
             answers += " " + ans
         corr = correctness.split()
         num_incor = []
+        set_hint = False
         for i in range(len(corr)):
             if corr[i].strip() == 'false':
                 num_incor.append(str(i))
-        if task_id in ides:
+                if i >= len(tasks_model.get(task_id)[1])-1:
+                    set_hint = True
+        if task_id in ides and not set_hint:
             progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
+        elif task_id in ides and set_hint:
+            progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
+            progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
         else:
             progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
             progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
         correct = progress.get_all(session['list_id'], task_id)
+        c = correct[0][-3]
         hint_given = list(map(int, correct[0][1].split()))
         if correct:
             c = correct[0][-3].split()
@@ -296,8 +316,8 @@ def task(id):
             answer = []
         if hint:
             webbrowser.open_new_tab(hint.strip())
-    return render_template('task.html', i=id, links=links, hint_given=hint_given, length=length, correct=c,
-                           answer=answer, choices=choices)
+    return render_template('task.html', i=id, picture=picture, links=links, hint_given=hint_given, length=length,
+                           correct=c, l_correct=len(c), answer=answer, choices=choices)
 
 
 @app.route('/all_users')
