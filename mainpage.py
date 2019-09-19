@@ -295,11 +295,7 @@ def task(id):
         for i in range(len(corr)):
             if corr[i].strip() == 'false':
                 num_incor.append(str(i))
-                if i >= len(tasks_model.get(task_id)[1])-1:
-                    set_hint = True
-        if task_id in ides and not set_hint:
-            progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
-        elif task_id in ides and set_hint:
+        if task_id in ides:
             progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
             current = set(progress.get_all(session['list_id'], task_id)[0][1].split())
             hint_given1 = list(current | set(num_incor))
