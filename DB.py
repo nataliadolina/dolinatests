@@ -106,7 +106,7 @@ class TasksModel:
         cursor = self.connection.cursor()
         cursor.execute('UPDATE task SET text=?, picture=?, links=?,'
                        ' hints=?, title=?, content=?, choices=?, correct_choice=? WHERE id=?',
-            (text, picture, links, hints, title, content, choices, correct, str(task_id, )))
+                       (text, picture, links, hints, title, content, choices, correct, str(task_id, )))
         cursor.close()
         self.connection.commit()
 

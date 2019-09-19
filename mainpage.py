@@ -301,7 +301,9 @@ def task(id):
             progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
         elif task_id in ides and set_hint:
             progress.update(l, num_correct, answers, correctness, task_id, session['list_id'])
-            progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
+            current = set(progress.get_all(session['list_id'], task_id)[0][1].split())
+            hint_given1 = list(current | set(num_incor))
+            progress.set_hint(task_id, session['list_id'], ' '.join(hint_given1))
         else:
             progress.insert(l, num_correct, answers, correctness, task_id, session['list_id'])
             progress.set_hint(task_id, session['list_id'], ' '.join(num_incor))
