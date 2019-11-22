@@ -291,7 +291,6 @@ def task(id):
             answers += " " + ans
         corr = correctness.split()
         num_incor = []
-        set_hint = False
         for i in range(len(corr)):
             if corr[i].strip() == 'false':
                 num_incor.append(str(i))
