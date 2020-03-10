@@ -65,15 +65,6 @@ color:#98FB98;
                             {{ error }}
                         </div>
                         {% endfor %}
-                       <p>
-                            {{ form.picture.label }}<br>
-                            {{ form.picture }}<br>
-                            {% for error in form.picture.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor %}
-                        <p>
                             {{ form.links.label }}<br>
                             {{ form.links }}<br>
                             {% for error in form.links.errors %}

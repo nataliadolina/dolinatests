@@ -17,11 +17,11 @@ class RegistrateForm(FlaskForm):
 
 
 class AddTaskForm(FlaskForm):
-    title = StringField('title', validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired()])
     text = TextAreaField('Text of the task')
-    picture = FileField()
-    sentence = TextAreaField('sentences', validators=[DataRequired()])
-    choice = TextAreaField('answer choice')
-    correct = TextAreaField('correct answer', validators=[DataRequired()])
-    hints = TextAreaField('hints')
+    # picture = FileField()
+    sentence = TextAreaField('Sentences', validators=[DataRequired()])
+    choice = TextAreaField('Answer choice')
+    correct = TextAreaField('Correct answer', validators=[DataRequired()])
+    hints = TextAreaField('Hints')
     links = TextAreaField('Extra files')

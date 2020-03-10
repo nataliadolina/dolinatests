@@ -86,7 +86,7 @@ def add_task(title):
             for i in users_ides:
                 users.append(users_base.get(i)[1])
             form.text.data = text
-            form.picture.data = picture
+            # form.picture.data = picture
             form.links.data = links
             form.hints.data = hints
             form.title.data = title1
@@ -95,7 +95,8 @@ def add_task(title):
             form.correct.data = correct_choice
     elif request.method == 'POST':
         text = form.text.data
-        picture = form.picture.data
+        # picture = form.picture.data
+        picture = None
         '''
         if allowed_file(f.filename):
             filename = secure_filename(f.filename)
@@ -259,6 +260,7 @@ def task(id):
     hint_given = []
     links = session['links'][id]
     picture = session['picture'][id]
+    text = session["text"][id]
     if correct:
         answer = correct[0][4].split()
         c = correct[0][-3].split()
@@ -319,8 +321,8 @@ def task(id):
             answer = []
         if hint:
             webbrowser.open_new_tab(hint.strip())
-    return render_template('task.html', i=id, picture=picture, links=links, hint_given=hint_given, length=length,
-                           correct=c, l_correct=len(c), answer=answer, choices=choices)
+    return render_template('task.html', i=id, text=text, picture=picture, links=links, hint_given=hint_given,
+                           length=length, correct=c, l_correct=len(c), answer=answer, choices=choices)
 
 
 @app.route('/all_users')
