@@ -78,9 +78,13 @@ def add_task(title):
     if 'username' not in session:
         return redirect('/login')
     form = AddTaskForm()
+    users = []
     if request.method == 'GET':
         if title != 0:
             text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(title)[1:]
+            users_ides = [i[-1] for i in task_user.get_by_task(title)]
+            for i in users_ides:
+                users.append(users_base.get(i)[1])
             form.text.data = text
             form.picture.data = picture
             form.links.data = links
@@ -150,7 +154,7 @@ def add_task(title):
                     elif not flag and not_title_index not in [i[1] for i in task_user.get_all(i)]:
                         task_user.insert(not_title_index, i)
             return redirect("/homepage")
-    return render_template('add_task.html', form=form, username=session['username'], users=all_users)
+    return render_template('add_task.html', form=form, checked=users, username=session['username'], users=all_users)
 
 
 @app.route('/all_tasks/<int:id>', methods=['GET', 'POST'])
@@ -160,6 +164,7 @@ def all_tasks(id):
         return redirect('/login')
     if id != 0 and session['user_id'] in [1, 2]:
         all = [i[1] for i in task_user.get_all(id)]
+        # print(users_base.get_all())
         username = users_base.get(id)[1]
         session['list_id'] = id
     else:
@@ -168,7 +173,7 @@ def all_tasks(id):
         session['list_id'] = session['user_id']
         all = [i[1] for i in task_user.get_all(session['list_id'])]
         username = ''
-    print(tasks_model.get_all())
+    # print(tasks_model.get_all())
     session['text'] = []
     session['picture'] = []
     session['titles'] = []
@@ -228,7 +233,8 @@ def all_tasks(id):
 def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    tasks_model.delete(id)
+    if id not in [i[1] for i in task_user.get_all()]:
+        tasks_model.delete(id)
     progress.delete(id, session['list_id'])
     task_user.delete(id, session['list_id'])
     return redirect('/all_tasks/{}'.format(session['list_id']))

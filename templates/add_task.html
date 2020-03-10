@@ -119,8 +119,12 @@ color:#98FB98;
                 <div class="col-lg-4">
                     <div class="form-group form-check">
                         {% for i in users %}
-                        <input type="checkbox" class="form-check-input" id="acceptRules" name={{i[0]}} value={{i[0]}}>
-                        <label class="form-check-label" for="acceptRules">{{i[1]}}</label>
+                        {%if i[1] in checked%}
+                        <input type="checkbox" class="form-check-input" name={{i[0]}} value={{i[0]}} checked>
+                        {%else%}
+                        <input type="checkbox" class="form-check-input" name={{i[0]}} value={{i[0]}}>
+                        {% endif %}
+                        <label class="form-check-label">{{i[1]}}</label>
                         <h4></h4>
                         {% endfor %}
                     </div>

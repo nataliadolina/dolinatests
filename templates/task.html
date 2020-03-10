@@ -36,7 +36,8 @@ select {
     {%if 'https://www.youtube.com/' in i%}
     <a href="{{i}}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true" target="_blank">Click here to watch video</a>
     {%else%}
-    <iframe src="{{i}}" width="500" height="200" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
+    <iframe src="{{i}}" width="500" height="200" frameborder="0"
+            webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
     {%endif%}
     <h1> </h1>
     {%endfor%}

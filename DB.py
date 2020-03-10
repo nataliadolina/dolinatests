@@ -20,6 +20,7 @@ class UsersModel:
 
     def init_table(self):
         cursor = self.connection.cursor()
+        # cursor.execute('DROP TABLE IF EXISTS users')
         cursor.execute('''CREATE TABLE IF NOT EXISTS users 
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              user_name VARCHAR(50),
@@ -215,6 +216,12 @@ class TaskUser:
                           VALUES (?,?)''', (str(task_id), str(user_id)))
         self.connection.commit()
         cursor.close()
+
+    def get_by_task(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM taskuser WHERE task_id = ?", (str(id),))
+        rows = cursor.fetchall()
+        return rows
 
     def get_all(self, id=None):
         cursor = self.connection.cursor()
