@@ -237,3 +237,9 @@ class TaskUser:
         cursor.execute('''DELETE FROM taskuser WHERE task_id=? AND user_id=?''', (str(id), str(user_id)))
         self.connection.commit()
         cursor.close()
+
+    def delete_by_task(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM taskuser WHERE task_id=?''', (str(id),))
+        self.connection.commit()
+        cursor.close()

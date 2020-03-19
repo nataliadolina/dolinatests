@@ -62,6 +62,30 @@ def popp():
     return redirect('/homepage')
 
 
+@app.route('/mainpage', methods=['GET', 'POST'])
+def show_all():
+    all_tasks = tasks_model.get_all()
+    session["all_titles"] = []
+    session['all_contents'] = []
+    session['all_ides'] = []
+    all = len(all_tasks)
+    for task in all_tasks:
+        id, text, picture, links, hints, title, content, choices, correct_choices = task
+        session['all_titles'].append(title)
+        if content:
+            session['all_contents'].append(content[0])
+        else:
+            session['all_contents'].append("")
+        session['all_ides'].append(id)
+    return render_template('all_tasks.html', all=range(0, all))
+
+
+@app.route('/add_to_user/<int:id>', methods=['GET', 'POST'])
+def add_to_user(id):
+    task_user.insert(id, session['user_id'])
+    return redirect('/mainpage')
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
@@ -122,8 +146,10 @@ def add_task(title):
                                    text='task with such title already exists')
         else:
             not_title_index, title_index = title, title
+            inserted = False
             if not title:
                 tasks_model.insert(text, picture, links, hints, title1, sentence, choice, correct)
+                inserted = True
                 not_title_index = tasks_model.index()
             ides = [j[0] for j in all_users]
             checked = []
@@ -140,8 +166,9 @@ def add_task(title):
                 if request.form.get(str(i)):
                     checked.append(i)
             else:
-                if session['list_id'] not in checked:
+                if session['list_id'] not in checked and not inserted:
                     tasks_model.insert(text, picture, links, hints, title1, sentence, choice, correct)
+                    inserted = True
                     title_index = tasks_model.index()
                     flag = True
                 else:
@@ -234,11 +261,20 @@ def all_tasks(id):
 def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
-    if id not in [i[1] for i in task_user.get_all()]:
-        tasks_model.delete(id)
+    # if id not in [i[1] for i in task_user.get_all()]:
+        # tasks_model.delete(id)
     progress.delete(id, session['list_id'])
-    task_user.delete(id, session['list_id'])
+    if task_user.get_by_task(id):
+        task_user.delete(id, session['list_id'])
     return redirect('/all_tasks/{}'.format(session['list_id']))
+
+
+@app.route('/deletefromdb/<int:id>', methods=['GET', 'POST'])
+def delete_from_db(id):
+    tasks_model.delete(id)
+    if task_user.get_by_task(id):
+        task_user.delete_by_task(id)
+    return redirect("/mainpage")
 
 
 @app.route('/task/<int:id>', methods=['GET', 'POST'])
@@ -253,7 +289,6 @@ def task(id):
     choices = []
     task_id = session['task_id'][id]
     correct = progress.get_all(session['list_id'], task_id)
-    print(correct)
     c = []
     ides = []
     answer = []

@@ -4,24 +4,24 @@ from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Login', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Enter')
+    username = StringField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    submit = SubmitField('Войти')
 
 
 class RegistrateForm(FlaskForm):
-    username = StringField('Login', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    repeatpassword = PasswordField('Repeat password', validators=[DataRequired()])
-    submit = SubmitField('Done')
+    username = StringField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    repeatpassword = PasswordField('Повторите пароль', validators=[DataRequired()])
+    submit = SubmitField('Готово')
 
 
 class AddTaskForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
-    text = TextAreaField('Text of the task')
+    title = StringField('Заголовок', validators=[DataRequired()])
+    text = TextAreaField('Текст задания')
     # picture = FileField()
-    sentence = TextAreaField('Sentences', validators=[DataRequired()])
-    choice = TextAreaField('Answer choice')
-    correct = TextAreaField('Correct answer', validators=[DataRequired()])
-    hints = TextAreaField('Hints')
-    links = TextAreaField('Extra files')
+    sentence = TextAreaField('Предложения', validators=[DataRequired()])
+    choice = TextAreaField('Выбор ответа')
+    correct = TextAreaField('Правильный пароль', validators=[DataRequired()])
+    hints = TextAreaField('Подсказки')
+    links = TextAreaField('Дополнительные файлы')
