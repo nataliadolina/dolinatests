@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <div class="jumbotron" style="background-image: url(/static/gradientyellow.jpg); background-size: 100%;">
-        <h1 class="display-4">My tasks</h1>
+        <h1 class="display-4">Мои задания</h1>
         <p class="lead">
         <h5>{{name}}</h5>
     </div>
@@ -16,10 +16,10 @@
             <h5 class="card-title">{{session['titles'][i]}}</h5>
             <p class="card-text">{{session['scores'][i]}}</p>
             {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-            <a href="/delete/{{all[i]}}" class="btn btn-light">Delete</a>
-            <a href="/add_task/{{all[i]}}" class="btn btn-light">Change</a>
+            <a href="/delete/{{all[i]}}" class="btn btn-light">Удалить</a>
+            <a href="/add_task/{{all[i]}}" class="btn btn-light">Редактировать</a>
             {% endif %}
-            <a href="/task/{{i}}" class="btn btn-light">Start</a>
+            <a href="/task/{{i}}" class="btn btn-light">Выполнить</a>
             </div>
         </div>
         {% endif %}
@@ -31,10 +31,10 @@
                     <h5 class="card-title">{{session['titles'][i+1]}}</h5>
                     <p class="card-text">{{session['scores'][i+1]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                    <a href="/delete/{{all[i+1]}}" class="btn btn-light">Delete</a>
-                    <a href="/add_task/{{all[i+1]}}" class="btn btn-light">Change</a>
+                    <a href="/delete/{{all[i+1]}}" class="btn btn-light">Удалить</a>
+                    <a href="/add_task/{{all[i+1]}}" class="btn btn-light">Редактировать</a>
                     {% endif %}
-                    <a href="/task/{{i+1}}" class="btn btn-light">Start</a>
+                    <a href="/task/{{i+1}}" class="btn btn-light">Выполнить</a>
                     </div>
                 </div>
             </div>
@@ -48,10 +48,10 @@
                     <h5 class="card-title">{{session['titles'][i+2]}}</h5>
                     <p class="card-text">{{session['scores'][i+2]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                    <a href="/delete/{{session['task_id'][i+2]}}" class="btn btn-light">Delete</a>
-                    <a href="/add_task/{{session['task_id'][i+2]}}" class="btn btn-light">Change</a>
+                    <a href="/delete/{{session['task_id'][i+2]}}" class="btn btn-light">Удалить</a>
+                    <a href="/add_task/{{session['task_id'][i+2]}}" class="btn btn-light">Редактировать</a>
                     {% endif %}
-                    <a href="/task/{{i+2}}" class="btn btn-light">Start</a>
+                    <a href="/task/{{i+2}}" class="btn btn-light">Выполнить</a>
                     </div>
                 </div>
             </div>

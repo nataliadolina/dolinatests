@@ -21,7 +21,8 @@ class AddTaskForm(FlaskForm):
     text = TextAreaField('Текст задания')
     # picture = FileField()
     sentence = TextAreaField('Предложения', validators=[DataRequired()])
-    choice = TextAreaField('Выбор ответа')
-    correct = TextAreaField('Правильный пароль', validators=[DataRequired()])
+    choice = TextAreaField('Выбор ответа (разделите вырианты ответа знаком //.'
+                           ' \n Варианты ответа для каждого предложения пишутся с новой строки.)')
+    correct = TextAreaField('Правильный ответ')
     hints = TextAreaField('Подсказки')
     links = TextAreaField('Дополнительные файлы')

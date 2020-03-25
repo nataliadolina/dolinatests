@@ -73,7 +73,7 @@ def show_all():
         id, text, picture, links, hints, title, content, choices, correct_choices = task
         session['all_titles'].append(title)
         if content:
-            session['all_contents'].append(content[0])
+            session['all_contents'].append(content.split("\n")[0])
         else:
             session['all_contents'].append("")
         session['all_ides'].append(id)
@@ -221,7 +221,7 @@ def all_tasks(id):
             session['contents'].append(content.split('\n'))
             session['correct'].append(correct_choices.split('\n'))
             if choices:
-                choices = [i.split() for i in choices.split('\n')]
+                choices = [i.split("//") for i in choices.split('\n')]
                 session['choices'].append(choices)
             else:
                 session['choices'].append([])

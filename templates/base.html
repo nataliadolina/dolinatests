@@ -43,13 +43,13 @@ body {
                 <div class="top_nav" style="background-color: #438a5e;">
                     <ul>
                         {% if "username" in session %}
-                        <li><a class="navbar-brand" href="/homepage1"><h4>Моя страница</h4></a></li>
-                        <li><a class="navbar-brand" href="/mainpage"><h4>Главная страница</h4></a></li>
+                        <li><a class="navbar-brand" href="/homepage1"><h5>Моя страница</h5></a></li>
+                        <li><a class="navbar-brand" href="/mainpage"><h5>Главная страница</h5></a></li>
                         {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                        <li><a class="navbar-brand" href="/add_task/0"><h4>Добавить задание</h4></a></li>
-                        <li><a class="navbar-brand" href="/all_users"><h4>Все пользователи</h4></a></li>
+                        <li><a class="navbar-brand" href="/add_task/0"><h5>Добавить задание</h5></a></li>
+                        <li><a class="navbar-brand" href="/all_users"><h5>Все пользователи</h5></a></li>
                         {% endif %}
-                        <li><a class="navbar-brand" href="/logout"><h4>{{session['username']}}</h4></a></li>
+                        <li><a class="navbar-brand" href="/logout"><h5>{{session['username']}}</h5></a></li>
                         {% endif %}
                     </ul>
                 </div>
