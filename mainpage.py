@@ -62,8 +62,18 @@ def popp():
     return redirect('/homepage')
 
 
+@app.route('/return_to_mainpage', methods=['GET', 'POST'])
+def return_to_mainpage():
+    all_tasks = tasks_model.get_all()
+    all = len(all_tasks)
+    return render_template('all_tasks.html', all=range(0, all),
+                           text='Чтобы добавлять задания к себе, пожалуйста, авторизуйтесь.')
+
+
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/mainpage', methods=['GET', 'POST'])
 def show_all():
+    session["nothing"] = ''
     all_tasks = tasks_model.get_all()
     session["all_titles"] = []
     session['all_contents'] = []
@@ -77,7 +87,7 @@ def show_all():
         else:
             session['all_contents'].append("")
         session['all_ides'].append(id)
-    return render_template('all_tasks.html', all=range(0, all))
+    return render_template('all_tasks.html', all=range(0, all), text='')
 
 
 @app.route('/add_to_user/<int:id>', methods=['GET', 'POST'])
@@ -86,7 +96,6 @@ def add_to_user(id):
     return redirect('/mainpage')
 
 
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
     if 'username' in session:
@@ -275,7 +284,6 @@ def all_tasks(id):
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
     n = list(range(0, len(all), 3))
-    print(session['contents'])
     return render_template('tasks.html', flag=True, n=n, all=all, n_all=len(all), name=username)
 
 

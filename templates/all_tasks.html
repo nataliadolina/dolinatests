@@ -1,18 +1,29 @@
 {%extends "base.html"%}
 {% block content %}
+<div class="container">
+{% if text != ''%}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ text }}
+        </div>
+{%endif%}
+</div>
 {%for i in all%}
 <div class="container">
     <div class="card">
-        <div class="card-body">
+       <div class="card-body">
       <h5 class="card-header">{{session['all_titles'][i]}}</h5>
         <p class="card-text">{{session['all_contents'][i] + '...'}}</p>
+        {%if session['user_id']%}
         {%if session['user_id'] in [1, 2]%}
         <a href="/deletefromdb/{{session['all_ides'][i]}}" class="btn btn-light">Удалить</a>
         <a href="/add_task/{{session['all_ides'][i]}}" class="btn btn-light">Редактировать</a>
         {% endif %}
         <a href="/add_to_user/{{session['all_ides'][i]}}" class="btn btn-light">Добавить к себе</a>
-            </div>
+        {%else%}
+         <a href="/return_to_mainpage" class="btn btn-light">Добавить к себе</a>
+           {%endif%}
+        </div>
     </div>
-</div>
+ </div>
 {% endfor %}
 {% endblock %}
