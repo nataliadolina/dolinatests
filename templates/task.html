@@ -52,20 +52,15 @@ select {
             {% elif j>l_correct-1 %}
             <h5>{{session['contents'][i][j]}}</h5>
             {% else %}
-            <span class="badge badge-danger">-</span>
-            {%for word in session['splitedcontents'][i][j]%}
-            {% with k=k+1 %}
-            {% endwith %}
-            {%if k>= session['whattounderline'][i][j][0] and k <= session['whattounderline'][i][j][1]%}
-            <p class="text-info">{{word}}</p>
-            {%else%}
-            <h5>{{word}}</h5>
-            {%endif%}
-            {%endfor%}
+            <span class="badge badge-danger">-</span><h5>{{session['contents'][i][j]}}</h5>
             {% endif %}
+            {%else%}
+            <h5>{{session['contents'][i][j]}}</h5>
+            {%endif%}
+
             <div class="col item">
                 <div class="col-2 item">
-                    {% if choices[j] != ""%}
+                    {% if choices[j]%}
                     <select class="dropdown" name={{j}}>
                         {%for element1 in choices[j]%}
                         {%if answer%}
@@ -81,20 +76,21 @@ select {
                     </select>
                     {%else%}
                     <div class="form-group">
-                        <input class="form-control" name={{j}} value="{{answer[j]}}" id="answer">
+                        <input class="form-control form-control-sm" name={{j}} value="{{answer[j]}}" length="10" id="answer">
 
+                    {%endif%}
                 </div>
             </div>
         </div>
-                    {%endif%}
             <h1></h1>
         </div>
+    </div>
     </div>
     <h1> </h1>
 </div>
       </div>
     </div>
- {%endif%}
+
 {%endfor%}
 
 <div class="container">

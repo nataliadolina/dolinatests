@@ -235,8 +235,8 @@ def all_tasks(id):
                     arr = [index_start, index_finish]
                 else:
                     arr = []
-                i.pop('[')
-                i.pop(']')
+                i.replace('[', '')
+                i.replace(']', '')
                 arr1.append(arr)
             session['whattounderline'].append(arr1)
             session['correct'].append(correct_choices.split('\n'))
@@ -275,6 +275,7 @@ def all_tasks(id):
         scores1.append(str(n_correct) + '/' + str(n_all))
     session['scores'] = scores1
     n = list(range(0, len(all), 3))
+    print(session['contents'])
     return render_template('tasks.html', flag=True, n=n, all=all, n_all=len(all), name=username)
 
 
