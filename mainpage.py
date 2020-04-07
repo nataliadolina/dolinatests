@@ -136,14 +136,16 @@ def add_task(title):
         choice = form.choice.data
         correct = form.correct.data
         hints = form.hints.data.strip()
+        '''
         if (len(sentence.split('\n')) != len(choice.split('\n')) or len(correct.split('\n')) != len(
                 choice.split('\n'))) and choice != '':
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
                                    text='invalid task. Number of strings in labels "sentences",'
                                         ' "answer choice", "correct answer" must be the same')
+                                        '''
         if not title and title1 in [i[1] for i in tasks_model.get_all()]:
             return render_template('add_task.html', form=form, username=session['username'], users=all_users,
-                                   text='task with such title already exists')
+                                   text='задание с таким названием уже существует.')
         else:
             not_title_index, title_index = title, title
             inserted = False
@@ -211,6 +213,9 @@ def all_tasks(id):
     session['task_id'] = all
     session['hints'] = []
     session['links'] = []
+    session['whattounderline'] = []
+    session['splitedcontents'] = []
+    arr1 = []
     all1 = set()
     for i in all:
         try:
@@ -218,8 +223,24 @@ def all_tasks(id):
             session['text'].append(text)
             session['picture'].append(picture)
             session['titles'].append(title)
+            arr1 = []
+            arr = []
+            arr3 = []
             session['contents'].append(content.split('\n'))
+            for i in session['contents'][-1]:
+                arr3.append(i.split())
+                if '[' in i and ']' in i:
+                    index_start = i.index("[")
+                    index_finish = i.index("]") - 1
+                    arr = [index_start, index_finish]
+                else:
+                    arr = []
+                i.pop('[')
+                i.pop(']')
+                arr1.append(arr)
+            session['whattounderline'].append(arr1)
             session['correct'].append(correct_choices.split('\n'))
+            session['splitedcontents'].append(arr3)
             if choices:
                 choices = [i.split("//") for i in choices.split('\n')]
                 session['choices'].append(choices)
@@ -262,7 +283,7 @@ def delete_tasks(id):
     if 'username' not in session:
         return redirect('/login')
     # if id not in [i[1] for i in task_user.get_all()]:
-        # tasks_model.delete(id)
+    # tasks_model.delete(id)
     progress.delete(id, session['list_id'])
     if task_user.get_by_task(id):
         task_user.delete(id, session['list_id'])
@@ -291,9 +312,13 @@ def task(id):
     correct = progress.get_all(session['list_id'], task_id)
     c = []
     ides = []
+    k = -1
     answer = []
     hint_given = []
-    links = session['links'][id]
+    if session['links']:
+        links = session['links'][id]
+    else:
+        links = []
     picture = session['picture'][id]
     text = session["text"][id]
     if correct:
@@ -357,7 +382,7 @@ def task(id):
         if hint:
             webbrowser.open_new_tab(hint.strip())
     return render_template('task.html', i=id, text=text, picture=picture, links=links, hint_given=hint_given,
-                           length=length, correct=c, l_correct=len(c), answer=answer, choices=choices)
+                           length=length, correct=c, l_correct=len(c), answer=answer, choices=choices, k=k)
 
 
 @app.route('/all_users')
