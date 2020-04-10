@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, url_for
 from werkzeug.utils import redirect, secure_filename
 from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
@@ -30,14 +30,14 @@ def registration():
         if exists[0]:
             form.username.data = ''
             return render_template('registration.html',
-                                   text='User with such name already exists. Please change the login', form=form)
+                                   text='Пользователь с таким именем уже существует. Пожалуйста, смените пароль', form=form)
         elif f2 != form.repeatpassword.data:
             form.password.data = ''
             return render_template('registration.html',
-                                   text='Passwords do not match. Please check your spelling and try again', form=form)
+                                   text='Введёенные вами пароли различаются. Пожалуйста, проверьте написание', form=form)
         else:
             session['username'] = form.username.data
-            users_base.insert(form.username.data, form.password.data)
+            users_base.insert(form.username.data, form.password.data, form.email.data)
             session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
             return redirect('/homepage')
     return render_template('registration.html', text='', form=form)
@@ -67,13 +67,13 @@ def return_to_mainpage():
     all_tasks = tasks_model.get_all()
     all = len(all_tasks)
     return render_template('all_tasks.html', all=range(0, all),
-                           text='Чтобы добавлять задания к себе, пожалуйста, авторизуйтесь.')
+                           text="Перед тем, как добавлять себе задания, пожалуйста, авторизуйтесь.")
 
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/mainpage', methods=['GET', 'POST'])
 def show_all():
-    session["nothing"] = ''
+    session["warning"] = 'Вы не можете повторно добавить задание, которое у вас уже есть.'
     all_tasks = tasks_model.get_all()
     session["all_titles"] = []
     session['all_contents'] = []
@@ -90,9 +90,20 @@ def show_all():
     return render_template('all_tasks.html', all=range(0, all), text='')
 
 
+@app.route('/warning', methods=['GET', 'POST'])
+def warning():
+    all_tasks = tasks_model.get_all()
+    all = len(all_tasks)
+    return render_template('all_tasks.html', all=range(0, all),
+                           text="Вы не можете добавлять одно и то же задание несколько раз")
+
+
 @app.route('/add_to_user/<int:id>', methods=['GET', 'POST'])
 def add_to_user(id):
-    task_user.insert(id, session['user_id'])
+    if session["user_id"] not in [i[-1] for i in task_user.get_by_task(id)]:
+        task_user.insert(id, session['user_id'])
+    else:
+        return redirect("/warning")
     return redirect('/mainpage')
 
 
@@ -106,16 +117,17 @@ def tasks():
         return redirect('/login')
 
 
-@app.route('/add_task/<int:title>', methods=['GET', 'POST'])
+@app.route('/add_task/<string:title>', methods=['GET', 'POST'])
 def add_task(title):
     if 'username' not in session:
         return redirect('/login')
     form = AddTaskForm()
     users = []
+    title = int(title)
     if request.method == 'GET':
-        if title != 0:
-            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(title)[1:]
-            users_ides = [i[-1] for i in task_user.get_by_task(title)]
+        if int(title) != -1:
+            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(session['task_id'][title])[1:]
+            users_ides = [i[-1] for i in task_user.get_by_task(session['task_id'][title])]
             for i in users_ides:
                 users.append(users_base.get(i)[1])
             form.text.data = text
@@ -212,6 +224,8 @@ def all_tasks(id):
         session['list_id'] = session['user_id']
         all = [i[1] for i in task_user.get_all(session['list_id'])]
         username = ''
+    else:
+        all = [i[1] for i in task_user.get_all(id)]
     # print(tasks_model.get_all())
     session['text'] = []
     session['picture'] = []
@@ -294,8 +308,8 @@ def delete_tasks(id):
     # if id not in [i[1] for i in task_user.get_all()]:
     # tasks_model.delete(id)
     progress.delete(id, session['list_id'])
-    if task_user.get_by_task(id):
-        task_user.delete(id, session['list_id'])
+    if task_user.get_by_task(session['task_id'][id]):
+        task_user.delete(session['task_id'][id], session['list_id'])
     return redirect('/all_tasks/{}'.format(session['list_id']))
 
 

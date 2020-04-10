@@ -11,13 +11,13 @@
     <div class="container">
         <div class="row">
         {% if i< n_all %}
-        <div class="card" name={{all[i]}} value={{all[i]}} style="width: 18rem;">
+        <div class="card" name={{i}} value={{i}} style="width: 18rem;">
             <div class="card-body">
             <h5 class="card-title">{{session['titles'][i]}}</h5>
             <p class="card-text">{{session['scores'][i]}}</p>
             {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-            <a href="/delete/{{all[i]}}" class="btn btn-light">Удалить</a>
-            <a href="/add_task/{{all[i]}}" class="btn btn-light">Редактировать</a>
+            <a href="/delete/{{i}}" class="btn btn-light">Удалить</a>
+            <a href="/add_task/{{i}}" class="btn btn-light">Редактировать</a>
             {% endif %}
             <a href="/task/{{i}}" class="btn btn-light">Выполнить</a>
             </div>
@@ -26,13 +26,13 @@
             {% if i+1 < n_all %}
             <div class="col item">
                 <div class="col-2 item">
-                    <div class="card" name={{all[i+1]}} value={{all[i+1]}} style="width: 18rem;">
+                    <div class="card" name={{i+1}} value={{i+1}} style="width: 18rem;">
                     <div class="card-body">
                     <h5 class="card-title">{{session['titles'][i+1]}}</h5>
                     <p class="card-text">{{session['scores'][i+1]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                    <a href="/delete/{{all[i+1]}}" class="btn btn-light">Удалить</a>
-                    <a href="/add_task/{{all[i+1]}}" class="btn btn-light">Редактировать</a>
+                    <a href="/delete/{{i+1}}" class="btn btn-light">Удалить</a>
+                    <a href="/add_task/{{i+1}}" class="btn btn-light">Редактировать</a>
                     {% endif %}
                     <a href="/task/{{i+1}}" class="btn btn-light">Выполнить</a>
                     </div>
@@ -43,13 +43,13 @@
                 {% if i+2 < n_all %}
             <div class="col item">
                 <div class="col-3 item">
-                    <div class="card" name={{all[i+2]}} value={{all[i+2]}} style="width: 18rem;">
+                    <div class="card" name={{i+2}} value={{i+2}} style="width: 18rem;">
                     <div class="card-body">
                     <h5 class="card-title">{{session['titles'][i+2]}}</h5>
                     <p class="card-text">{{session['scores'][i+2]}}</p>
                     {% if session['user_id'] == 1 or session['user_id'] == 2 %}
-                    <a href="/delete/{{session['task_id'][i+2]}}" class="btn btn-light">Удалить</a>
-                    <a href="/add_task/{{session['task_id'][i+2]}}" class="btn btn-light">Редактировать</a>
+                    <a href="/delete/{{i+2}}" class="btn btn-light">Удалить</a>
+                    <a href="/add_task/{{i+2}}" class="btn btn-light">Редактировать</a>
                     {% endif %}
                     <a href="/task/{{i+2}}" class="btn btn-light">Выполнить</a>
                     </div>

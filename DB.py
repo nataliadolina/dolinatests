@@ -24,7 +24,8 @@ class UsersModel:
         cursor.execute('''CREATE TABLE IF NOT EXISTS users 
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              user_name VARCHAR(50),
-                             password_hash VARCHAR(128)
+                             password_hash VARCHAR(128),
+                             email VARCHAR(128)
                              )''')
         cursor.close()
         self.connection.commit()
@@ -51,12 +52,12 @@ class UsersModel:
         rows = cursor.fetchall()
         return rows
 
-    def insert(self, user_name, password_hash):
+    def insert(self, user_name, password_hash, email):
         cursor = self.connection.cursor()
         password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
         cursor.execute('''INSERT INTO users 
-                          (user_name, password_hash) 
-                          VALUES (?,?)''', (user_name, password_hash))
+                          (user_name, password_hash, email) 
+                          VALUES (?,?,?)''', (user_name, password_hash, email))
         cursor.close()
         self.connection.commit()
 

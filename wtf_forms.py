@@ -1,6 +1,8 @@
-from flask_wtf import FlaskForm
+from django.forms import EmailField
+from flask_wtf import FlaskForm, validators
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, FileField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, InputRequired, Email
+from wtforms.fields.html5 import EmailField
 
 
 class LoginForm(FlaskForm):
@@ -13,6 +15,7 @@ class RegistrateForm(FlaskForm):
     username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     repeatpassword = PasswordField('Повторите пароль', validators=[DataRequired()])
+    email = EmailField("Email", validators=[InputRequired("Введите свой email."), Email("Введите свой email.")])
     submit = SubmitField('Готово')
 
 
@@ -24,5 +27,7 @@ class AddTaskForm(FlaskForm):
     choice = TextAreaField('Выбор ответа (разделите варианты ответа знаком //.'
                            ' \n Варианты ответа для каждого предложения пишутся с новой строки.)')
     correct = TextAreaField('Правильный ответ')
-    hints = TextAreaField('Подсказки')
-    links = TextAreaField('Дополнительные файлы')
+    hints = TextAreaField('Подсказки. \n '
+                          'Сюда вы прикрепляете ссылки страниц,'
+                          ' на которые перенаправляется пользователь в случае неправильного ответа')
+    links = TextAreaField('Дополнительные файлы. (аудио, видео с youtube и др.)')
