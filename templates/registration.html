@@ -56,10 +56,10 @@ input:focus, textarea:focus {
 <div class="container">
 <div class="row">
 <div class="col-md-6 col-lg-offset-3">
-    <h1 class="text-center">Registration</h1>
+    <h1 class="text-center">Регистрация</h1>
     <div class="jumbotron">
 <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
             <p>
                 {{ form.email.label }}<br>
                 {{ form.email }}<br>
@@ -93,7 +93,7 @@ input:focus, textarea:focus {
                 {{ error }}
             </div>
             {% endfor %}
-            <p>{{ form.submit() }}</p>
+    <p>{{ form.submit() }}</p>
         </form>
         <a href="/login" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign in</a>
         {% if text != ''%}

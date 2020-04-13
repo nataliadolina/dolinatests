@@ -59,6 +59,15 @@ input:focus, textarea:focus {
     <div class="jumbotron">
         <form action="" method="post" novalidate>
             {{ form.hidden_tag() }}
+             <p>
+                {{ form.email.label }}<br>
+                {{ form.email }}<br>
+                {% for error in form.email.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
+            <p>
             <p>
                 {{ form.username.label }}<br>
                 {{ form.username }}<br>
@@ -77,6 +86,7 @@ input:focus, textarea:focus {
             {% endfor %}
             <p>{{ form.submit() }}</p>
         </form>
+        <a href="/send_email/{{email}}" aria-pressed="true">Забыли пароль?</a>
         <a href="/registration" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Sign up</a>
         {% if text != ''%}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">

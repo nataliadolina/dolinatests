@@ -25,7 +25,9 @@ class UsersModel:
                             (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                              user_name VARCHAR(50),
                              password_hash VARCHAR(128),
-                             email VARCHAR(128)
+                             email VARCHAR(128),
+                             role VARCHAR(50) DEFAULT student,
+                             teacher_id INTEGER DEFAULT NULL
                              )''')
         cursor.close()
         self.connection.commit()
@@ -33,16 +35,23 @@ class UsersModel:
     def get_connection(self):
         return self.connection
 
-    def exists(self, user_name, password_hash):
+    def exists(self, user_name, password_hash, email):
         cursor = self.connection.cursor()
         password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
-        cursor.execute("SELECT * FROM users WHERE user_name = ? AND password_hash = ?", (user_name, password_hash))
+        cursor.execute("SELECT * FROM users WHERE user_name = ? AND password_hash = ? AND email = ?",
+                       (user_name, password_hash, email))
         row = cursor.fetchone()
-        return (True, row[0]) if row else (False,)
+        return (True, row) if row else (False,)
 
     def get(self, user_id):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM users WHERE id = ?", (str(user_id),))
+        row = cursor.fetchone()
+        return row
+
+    def get_by_email(self, email):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         row = cursor.fetchone()
         return row
 
@@ -61,9 +70,30 @@ class UsersModel:
         cursor.close()
         self.connection.commit()
 
-    def delete(self):
+    def insert_admin(self, user_name, password_hash, email, role):
         cursor = self.connection.cursor()
-        cursor.execute('''DELETE FROM users''')
+        password_hash = hashlib.sha224(password_hash.encode('utf-8')).hexdigest()
+        cursor.execute('''INSERT INTO users 
+                          (user_name, password_hash, email, role) 
+                          VALUES (?,?,?,?)''', (user_name, password_hash, email, role))
+        cursor.close()
+        self.connection.commit()
+
+    def change_role(self, role, id):
+        cursor = self.connection.cursor()
+        cursor.execute('UPDATE users SET role=? WHERE id=?', (role, str(id),))
+        cursor.close()
+        self.connection.commit()
+
+    def get_by_teacher(self, teacher_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT * FROM users ORDER BY user_name WHERE teacher_id=?", (str(teacher_id),))
+        rows = cursor.fetchall()
+        return rows
+
+    def delete(self, user_id):
+        cursor = self.connection.cursor()
+        cursor.execute('''DELETE FROM users WHERE id=?''', (str(user_id),))
 
 
 class TasksModel:
@@ -82,7 +112,8 @@ class TasksModel:
                                      title VARCHAR(100),
                                      content VARCHAR(10000),
                                      choices VARCHAR(1000),
-                                     correct_choice VARCHAR(100)
+                                     correct_choice VARCHAR(100),
+                                     underline VARCHAR(1000) DEFAULT NULL
                              )''')
         cursor.close()
         self.connection.commit()

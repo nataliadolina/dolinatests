@@ -6,6 +6,7 @@ from wtforms.fields.html5 import EmailField
 
 
 class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
     username = StringField('Логин', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     submit = SubmitField('Войти')

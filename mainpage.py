@@ -5,6 +5,7 @@ from werkzeug.utils import redirect, secure_filename
 from DB import DB, UsersModel, TasksModel, ProgresssModel, TaskUser
 from wtf_forms import RegistrateForm, LoginForm, AddTaskForm
 import webbrowser
+from emailer import send_email
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -25,20 +26,26 @@ task_user.init_table()
 def registration():
     form = RegistrateForm()
     if form.validate_on_submit():
-        f1, f2 = form.username.data, form.password.data
-        exists = users_base.exists(f1, f2)
+        f1, f2, f3 = form.username.data, form.password.data, form.email.data
+        exists = users_base.exists(f1, f2, f3)
         if exists[0]:
             form.username.data = ''
             return render_template('registration.html',
-                                   text='Пользователь с таким именем уже существует. Пожалуйста, смените пароль', form=form)
+                                   text='Пользователь с таким именем уже существует. Пожалуйста, смените пароль',
+                                   form=form)
         elif f2 != form.repeatpassword.data:
             form.password.data = ''
             return render_template('registration.html',
-                                   text='Введёенные вами пароли различаются. Пожалуйста, проверьте написание', form=form)
+                                   text='Введённые вами пароли различаются. Пожалуйста, проверьте написание', form=form)
         else:
             session['username'] = form.username.data
-            users_base.insert(form.username.data, form.password.data, form.email.data)
-            session['user_id'] = users_base.exists(form.username.data, form.password.data)[1]
+            if len(users_base.get_all()) <= 1:
+                users_base.insert_admin(form.username.data, form.password.data, form.email.data, "admin")
+            else:
+                users_base.insert(form.username.data, form.password.data, form.email.data)
+            user_inf = users_base.exists(form.username.data, form.password.data, form.email.data)
+            session['user_id'] = user_inf[1][0]
+            session["role"] = user_inf[1][4]
             return redirect('/homepage')
     return render_template('registration.html', text='', form=form)
 
@@ -46,14 +53,19 @@ def registration():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if "login_text" not in session:
+        session['login_text'] = ''
     if form.validate_on_submit():
-        exists = users_base.exists(request.form['username'], request.form['password'])
+        exists = users_base.exists(request.form['username'], request.form['password'], form.email.data)
         if exists[0]:
             session['username'] = request.form['username']
-            session['user_id'] = exists[1]
+            session['user_id'] = exists[1][0]
             return redirect('/homepage')
-        return render_template('login.html', title='Authorization', text='invalid login or password', form=form)
-    return render_template('login.html', title='Authorization', text='', form=form)
+        session['login_text'] = "Неверный логин или пароль"
+        return render_template('login.html', title='Авторизация', text=session["login_text"], form=form,
+                               email=form.email.data)
+    return render_template('login.html', title='Авторизация', text=session["login_text"], form=form,
+                           email=form.email.data)
 
 
 @app.route('/homepage1', methods=['GET', 'POST'])
@@ -80,7 +92,7 @@ def show_all():
     session['all_ides'] = []
     all = len(all_tasks)
     for task in all_tasks:
-        id, text, picture, links, hints, title, content, choices, correct_choices = task
+        id, text, picture, links, hints, title, content, choices, correct_choices, underline = task
         session['all_titles'].append(title)
         if content:
             session['all_contents'].append(content.split("\n")[0])
@@ -109,12 +121,24 @@ def add_to_user(id):
 
 @app.route('/homepage', methods=['GET', 'POST'])
 def tasks():
+    session["login_text"] = ''
     if 'username' in session:
         if 'list_id' not in session:
             session['list_id'] = 0
         return redirect('/all_tasks/{}'.format(session['list_id']))
     else:
         return redirect('/login')
+
+
+@app.route('/send_email/<string:email>', methods=['GET', 'POST'])
+def send_email(email):
+    form = LoginForm()
+    if email == "None":
+        return render_template('login.html', text='Пожалуйста, введите email', form=form)
+    if not users_base.get_by_email(email):
+        return render_template('login.html', text='Пользователь с введённой вами почтой не зарегистрирован', form=form,
+                               email=form.email.data)
+    send_email(email, "Вау это работает")
 
 
 @app.route('/add_task/<string:title>', methods=['GET', 'POST'])
@@ -126,9 +150,12 @@ def add_task(title):
     title = int(title)
     if request.method == 'GET':
         if int(title) != -1:
-            text, picture, links, hints, title1, content, choices, correct_choice = tasks_model.get(session['task_id'][title])[1:]
-            users_ides = [i[-1] for i in task_user.get_by_task(session['task_id'][title])]
+            text, picture, links, hints, title1, content, choices, correct_choice, underline = tasks_model.get(
+                session['task_id'][title])[1:]
+            print(task_user.get_all())
+            users_ides = [i[2] for i in task_user.get_by_task(session['task_id'][title])]
             for i in users_ides:
+                print(i)
                 users.append(users_base.get(i)[1])
             form.text.data = text
             # form.picture.data = picture
@@ -213,7 +240,7 @@ def all_tasks(id):
     all, username = '', ''
     if 'username' not in session:
         return redirect('/login')
-    if id != 0 and session['user_id'] in [1, 2]:
+    if id != 0 and session['role'] == "admin":
         all = [i[1] for i in task_user.get_all(id)]
         # print(users_base.get_all())
         username = users_base.get(id)[1]
@@ -242,7 +269,7 @@ def all_tasks(id):
     all1 = set()
     for i in all:
         try:
-            text, picture, links, hints, title, content, choices, correct_choices = tasks_model.get(i)[1:]
+            text, picture, links, hints, title, content, choices, correct_choices, underline = tasks_model.get(i)[1:]
             session['text'].append(text)
             session['picture'].append(picture)
             session['titles'].append(title)
